@@ -28,11 +28,6 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended:true}))
 
-const server = http.createServer((req, res) => {
-    console.log(req.url);
-    res.end("Inicio del Servidor")
-})
-
 const instancia1 = new ProductManager(path);
 const { getProducts } = new ProductManager(path)
 
