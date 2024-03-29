@@ -25,10 +25,10 @@
 
 // FORMATO: Archivo de Javascript listo para ejecutarse desde node.
 
-const fs = require("node:fs");
-const path = "./Usuarios.json"
+import fs from "fs";
+const path = "./Productos.json"
 
-class ProductManager {
+export default class ProductManager {
     constructor(path) {
         this.Products = [];
         this.path = path;
@@ -132,5 +132,3 @@ class ProductManager {
     }
     
 }
-
-const instancia1 = new ProductManager(path);
