@@ -10,7 +10,7 @@ export default class ProductManager {
 
     readProductFile() {
         try {
-            const data = fs.readFileSync(this.path, "utf-8");
+            const data = fs.readFileSync(path, "utf-8");
             this.Products = JSON.parse(data);
         } catch (error) {
             console.error("Error al cargar productos:", error);
