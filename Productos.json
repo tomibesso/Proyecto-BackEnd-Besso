@@ -30,5 +30,25 @@
         "stock": 25,
         "status": true,
         "category": "Electrónica"
+    },
+    {
+        "id": 4,
+        "title": "Producto Prueba 4",
+        "description": "Este es un producto prueba",
+        "price": 400,
+        "code": "abc4",
+        "stock": 25,
+        "status": true,
+        "category": "Electrónica"
+    },
+    {
+        "id": 5,
+        "title": "Producto Prueba 5",
+        "description": "Este es un producto prueba",
+        "price": 500,
+        "code": "abc5",
+        "stock": 25,
+        "status": true,
+        "category": "Electrónica"
     }
 ]

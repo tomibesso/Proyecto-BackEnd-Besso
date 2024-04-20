@@ -1,0 +1,21 @@
+<main>
+    <h1>E-Commerce del Proyecto BackEnd, Bienvenido {{ nombre }} {{ apellido }}!</h1>
+    <div>
+        {{#if role}}
+            <h2>Se pueden ver los productos</h2>
+            {{#each products}}
+                <div>
+                    <p>Id del producto: {{this.id}}</p>
+                    <p>Nombre del producto {{this.title}}</p>
+                    <p>Descripción del producto {{this.description}}</p>
+                    <p>Precio del producto {{this.price}}</p>
+                    <p>Código del producto {{this.code}}</p>
+                    <p>Stock del producto {{this.stock}}</p>
+                    <p>Categoría del producto {{this.category}}</p>
+                </div>
+            {{/each}}
+        {{else}}
+            <h2>No puede ver los productos</h2>
+        {{/if}}
+    </div>
+</main>
