@@ -23,17 +23,15 @@ app.use(productsSocket(io))
 io.on('connection', (socket) => {
     console.log('Nuevo cliente conectado');
 
-    // Obtén los productos del ProductManager
     const productManager = new ProductManager();
     const products = productManager.getProducts();
 
-    // Envía los productos al cliente conectado
     socket.emit('productos', products);
 });
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
-app.use("static", express.static(__dirname + "/public"));
+app.use(express.static(__dirname + "/public"));
 
 app.engine("handlebars", handlebars.engine())
 

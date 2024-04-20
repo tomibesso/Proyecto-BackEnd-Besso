@@ -18,16 +18,25 @@ const user = {
 router.get("/", (req, res) => {
     res.render("home", {
         username: user.username,
-        nombre: user.name,
-        apellido: user.lastName,
+        name: user.name,
+        lastName: user.lastName,
         role: user.role === 'admin',
-        title: 'E-Commerce Tomi',
+        title: 'E-Commerce Tomi Besso',
         products,
+        styles: "productsStyles.css"
     })
 })
 
 router.get("/realtimeproducts", (req, res) => {
-    res.render("realTimeProducts")
+    res.render("realTimeProducts", {
+        username: user.username,
+        name: user.name,
+        lastName: user.lastName,
+        role: user.role === 'admin',
+        title: 'E-Commerce Tomi Besso',
+        products,
+        styles: "productsStyles.css",
+    })
 })
 
 export default router;
