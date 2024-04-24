@@ -11,38 +11,33 @@ import ProductManager from "./managers/ProductManager.js";
 
 const app = express();
 
-const httpServer = app.listen(8080, error => {
+const PORT = process.env.PORT || 8080
+
+const httpServer = app.listen(PORT, error => {
     if(error) console.log(error)
     console.log('Server escuchando en el puerto 8080')
 })
-
 const io = new Server(httpServer)
 
 app.use(productsSocket(io))
 
-io.on('connection', (socket) => {
-    console.log('Nuevo cliente conectado');
-
-    const productManager = new ProductManager();
-    const products = productManager.getProducts();
-
-    socket.emit('productos', products);
-});
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(express.static(__dirname + "/public"));
 
-app.engine("handlebars", handlebars.engine())
+app.engine('hbs', handlebars.engine({
+    extname: '.hbs'
+}))
 
 app.set("views", __dirname+"/views")
-app.set("view engine", "handlebars")
+app.set("view engine", "hbs")
 
 app.use('/subir-archivo', uploader.single('myFile') ,(req, res) => {
     if (!req.file) {
         return res.send('no se puede subir el archivo')        
     }
-
+    
     res.send('archivo subido')
 })
 
@@ -54,6 +49,15 @@ app.use((error, req, res, next) => {
     console.log(error)
     res.status(500).send('Error 500 en el server')
 })
+
+io.on('connection', (socket) => {
+    console.log('Nuevo cliente conectado');
+
+    const productManager = new ProductManager();
+    const products = productManager.getProducts();
+
+    socket.emit('productos', products);
+});
 
 let messages = [] 
 
