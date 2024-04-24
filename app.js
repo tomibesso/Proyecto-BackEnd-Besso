@@ -54,3 +54,15 @@ app.use((error, req, res, next) => {
     console.log(error)
     res.status(500).send('Error 500 en el server')
 })
+
+let messages = [] 
+
+io.on('connection', socket => {
+    console.log('Cliente conectado')
+
+    socket.on('message', data => {
+        console.log('message data: ', data)
+        messages.push(data)
+        socket.emit('messageLogs', messages)
+    })
+})

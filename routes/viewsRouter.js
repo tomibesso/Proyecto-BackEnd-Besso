@@ -1,5 +1,6 @@
 import { Router } from "express";
 import ProductManager from "../managers/ProductManager.js";
+import { Server, Socket } from "socket.io";
 
 const router = Router();
 const path = "./Productos.json"
@@ -36,6 +37,29 @@ router.get("/realtimeproducts", (req, res) => {
         products,
         styles: "productsStyles.css",
     })
+})
+
+router.get('/chat', (req, res) => {
+    const io = req
+
+    io.on('connection', socket => {
+        console.log('nuevo cliete conectado')
+    
+        const messages = []
+    
+        // enviar mensajes viejos
+    
+        io.on('mensaje_cliente', data => {
+            console.log(data)
+    
+            messages.push({id: socket.id, messge: data})
+            
+            io.emit('messages_server', messages)
+        })
+    })
+
+    res.render('chat', {
+        styles: 'homeStyles.css' })
 })
 
 export default router;
