@@ -7,7 +7,7 @@ import { __dirname } from "./utils.js";
 import productsSocket from "./utils/productsSocket.js";
 import { uploader } from "./multer.js";
 import handlebars from "express-handlebars";
-import ProductManager from "./ProductManager.js";
+import ProductManager from "./managers/ProductManager.js";
 
 const app = express();
 
