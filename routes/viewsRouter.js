@@ -40,24 +40,6 @@ router.get("/realtimeproducts", (req, res) => {
 })
 
 router.get('/chat', (req, res) => {
-    const io = req
-
-    io.on('connection', socket => {
-        console.log('nuevo cliete conectado')
-    
-        const messages = []
-    
-        // enviar mensajes viejos
-    
-        io.on('mensaje_cliente', data => {
-            console.log(data)
-    
-            messages.push({id: socket.id, messge: data})
-            
-            io.emit('messages_server', messages)
-        })
-    })
-
     res.render('chat', {
         styles: 'homeStyles.css' })
 })
