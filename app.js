@@ -2,12 +2,14 @@ import express from "express";
 import productsRouter from "./routes/productsRouter.js";
 import cartsRouter from "./routes/cartsRouter.js";
 import viewsRouter from "./routes/viewsRouter.js";
+import usersRouter from "./routes/usersRouter.js";
 import { Server } from "socket.io"
 import { __dirname } from "./utils.js";
 import productsSocket from "./utils/productsSocket.js";
 import { uploader } from "./multer.js";
 import handlebars from "express-handlebars";
 import ProductManager from "./managers/ProductManager.js";
+import mongoose from "mongoose";
 
 const app = express();
 
@@ -33,6 +35,12 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(express.static(__dirname + "/public"));
 
+
+// conectar con mongo (despues se lleva a otro archivo)
+mongoose.connect("mongodb+srv://tomibesso:tomi2024@clusterecommercetomi.auhhpid.mongodb.net/miPrimeraDB?retryWrites=true&w=majority&appName=ClusterEcommerceTomi")
+
+
+
 app.engine("handlebars", handlebars.engine())
 
 app.set("views", __dirname+"/views")
@@ -48,6 +56,7 @@ app.use('/subir-archivo', uploader.single('myFile') ,(req, res) => {
 
 app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
+app.use('/api/users', usersRouter);
 app.use('/', viewsRouter);
 
 app.use((error, req, res, next) => {
