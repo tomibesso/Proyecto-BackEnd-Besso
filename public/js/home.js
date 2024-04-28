@@ -1,11 +1,17 @@
 const socket = io();
+
+// Escucha(on) los productos recibidos desde el servidor "app.js"
 socket.on("productos", (data) => {
-    console.log(data);
-    const productContainer = document.getElementById("product-container");
+    console.log(data); // Se muestra por consola el array de productos
+    const productContainer = document.getElementById("product-container"); // Selecciona el <div> donde se mostraran los productos
     productContainer.innerHTML = ""; // Limpiar contenido anterior
+
+    // Bucle que crea un <div> por cada producto del array
     data.forEach((product) => {
-        const card = document.createElement("div");
-        card.classList.add("col-md-4", "mb-4");
+        const card = document.createElement("div"); // Crea el <div> que representa una tarjeta de producto
+        card.classList.add("col-md-4", "mb-4"); // Agrega las clases al <div>
+
+        // Se establece el HTML interno del <div> de cada producto con toda su informacion
         card.innerHTML = `
                 <div class="card">
                     <img src="${product.thumbnails}" class="card-img-top" alt="Product Image">
@@ -19,6 +25,8 @@ socket.on("productos", (data) => {
                     </div>
                 </div>
             `;
+
+        // Se agrega el <div> de la tarjeta de cada producto al contenedor "product-container"
         productContainer.appendChild(card);
     });
 });

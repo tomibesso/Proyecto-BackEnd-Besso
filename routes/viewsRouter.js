@@ -1,12 +1,11 @@
 import { Router } from "express";
 import ProductManager from "../managers/ProductManager.js";
-import { Server, Socket } from "socket.io";
 
 const router = Router();
 const path = "./Productos.json"
 
-const instanciaProducts = new ProductManager(path);
-const products = instanciaProducts.getProducts();
+const instanciaProducts = new ProductManager(path); // Crea una instancia de ProductManager
+const products = instanciaProducts.getProducts(); // Guarda en la const los productos con el método de ProductManager
 
 const user = {
     username: "Tomibesso",
@@ -15,8 +14,9 @@ const user = {
     role: "admin"
 }
 
+// Método(petición) para mostrar el usuario y productos (no se actualiza solo)
 router.get("/", (req, res) => {
-    res.render("home", {
+    res.render("home", { // Renderiza la pantilla de "home.hbs" la cual tiene los datos del usuario y los productos
         username: user.username,
         name: user.name,
         lastName: user.lastName,
@@ -27,8 +27,9 @@ router.get("/", (req, res) => {
     })
 })
 
+// Método(petición) para mostrar el usuario y productos (se actualiza solo con websockets)
 router.get("/realtimeproducts", (req, res) => {
-    res.render("realTimeProducts", {
+    res.render("realTimeProducts", { // Renderiza la pantilla de "realTimeProducts.hbs" la cual tiene los datos del usuario y los productos
         username: user.username,
         name: user.name,
         lastName: user.lastName,
@@ -39,8 +40,9 @@ router.get("/realtimeproducts", (req, res) => {
     })
 })
 
+// Método(petición) para mostrar el chat
 router.get('/chat', (req, res) => {
-    res.render('chat', {
+    res.render('chat', { // Renderiza la plantilla "chat.hbs"
         styles: 'homeStyles.css' })
 })
 
