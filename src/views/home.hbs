@@ -1,0 +1,14 @@
+<main>
+    <h1>¡Bienvenido {{name}} {{lastName}} (usuario: {{username}}) al E-Commerce del Proyecto BackEnd!</h1>
+    <div>
+        {{#if role}}
+            <h2>Puedes ver los productos</h2>
+            {{!-- Div donde se van a mostrar los productos --}}
+                <div id="product-container" class="row"></div>
+        {{else}}
+            <h2>No puedes ver los productos</h2>
+        {{/if}}
+    </div>
+</main>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/home.js"></script>
