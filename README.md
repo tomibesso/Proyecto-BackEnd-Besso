@@ -1,6 +1,1 @@
-express 
-express-handlebars 
-multer 
-socket.io 
-
-
+express express-handlebars multer socket.io mongoose
