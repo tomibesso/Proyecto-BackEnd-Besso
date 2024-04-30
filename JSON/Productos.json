@@ -1,0 +1,54 @@
+[
+    {
+        "id": 1,
+        "title": "Producto Prueba 1",
+        "description": "Este es un producto prueba",
+        "price": 100,
+        "code": "abc1",
+        "stock": 25,
+        "status": true,
+        "category": "Electrónica"
+    },
+    {
+        "id": 2,
+        "title": "Producto Prueba 2",
+        "description": "Este es un producto prueba",
+        "price": 200,
+        "thumbnails": "Sin imagen",
+        "code": "abc2",
+        "stock": 25,
+        "status": true,
+        "category": "Electrónica"
+    },
+    {
+        "id": 3,
+        "title": "Producto Prueba 3",
+        "description": "Este es un producto prueba",
+        "price": 300,
+        "thumbnails": "Sin imagen",
+        "code": "abc3",
+        "stock": 25,
+        "status": true,
+        "category": "Electrónica"
+    },
+    {
+        "id": 4,
+        "title": "Producto Prueba 4",
+        "description": "Este es un producto prueba",
+        "price": 400,
+        "code": "abc4",
+        "stock": 25,
+        "status": true,
+        "category": "Electrónica"
+    },
+    {
+        "id": 5,
+        "title": "Producto Prueba 5",
+        "description": "Este es un producto prueba",
+        "price": 500,
+        "code": "abc5",
+        "stock": 25,
+        "status": true,
+        "category": "Electrónica"
+    }
+]
