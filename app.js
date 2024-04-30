@@ -38,7 +38,9 @@ mongoose.connect("mongodb+srv://tomibesso:tomi2024@clusterecommercetomi.auhhpid.
 
 
 // Configuración del motor de plantillas Handlebars
-app.engine("handlebars", handlebars.engine())
+app.engine('hbs', handlebars.engine({
+    extname: '.hbs'
+}))
 app.set("views", __dirname+"/views")
 app.set("view engine", "hbs")
 
