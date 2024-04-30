@@ -1,5 +1,5 @@
 import fs from "fs";
-const path = "./JSON/Productos.json"
+const path = "./src/JSON/Productos.json"
 
 export default class ProductManager {
     constructor(path) {

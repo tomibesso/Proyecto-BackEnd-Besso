@@ -1,7 +1,7 @@
 import fs from "fs";
 import ProductManager from "./ProductManager.js";
 
-const path = "./JSON/Carritos.json";
+const path = "./src/JSON/Carritos.json";
 
 export default class CartManager {
     constructor(path) {
