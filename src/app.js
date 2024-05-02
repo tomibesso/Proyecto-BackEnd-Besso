@@ -8,7 +8,7 @@ import { __dirname } from "./utils.js";
 import productsSocket from "./utils/productsSocket.js";
 import { uploader } from "./multer.js";
 import handlebars from "express-handlebars";
-import ProductManager from "./managers/ProductManager.js";
+import ProductManager from "./dao/ProductManagerFS.js";
 import mongoose from "mongoose";
 
 const app = express();
@@ -33,7 +33,7 @@ app.use(express.static(__dirname + "/public")); // Define la ruta de la carpeta 
 
 
 // conectar con mongo (despues se lleva a otro archivo)
-mongoose.connect("mongodb+srv://tomibesso:tomi2024@clusterecommercetomi.auhhpid.mongodb.net/miPrimeraDB?retryWrites=true&w=majority&appName=ClusterEcommerceTomi")
+mongoose.connect("mongodb+srv://tomibesso:tomi2024@clusterecommercetomi.auhhpid.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=ClusterEcommerceTomi")
 
 
 // Configuración del motor de plantillas Handlebars
