@@ -43,7 +43,7 @@ router.get("/realtimeproducts", (req, res) => {
 // Método(petición) para mostrar el chat
 router.get('/chat', (req, res) => {
     res.render('chat', { // Renderiza la plantilla "chat.hbs"
-        styles: 'homeStyles.css' })
+        styles: './public/css/chatStyles.css' })
 })
 
 export default router;

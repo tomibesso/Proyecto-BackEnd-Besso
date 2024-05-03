@@ -1,13 +1,17 @@
 const socket = io()
-let user // Guarda el nombre del usuario ingresado por input de sweet alert
+let user // Guarda el mail del usuario ingresado por input de sweet alert
 
-// Alerta que pide nombre de usuario
+// Alerta que pide mail del usuario
 Swal.fire({
     title: 'Identifícate',
-    input: 'text',
-    text: 'Ingresa el usuario para identificarte en el chat',
-    inputValidator: value => { // Validación que pide que el input no esté vacío
-        return !value && 'Necesitas escribir un nombre de usuario para continuar'
+    input: 'email',
+    text: 'Ingresa tu mail para identificarte en el chat',
+    inputValidator: value => { // Valida que el valor ingresado sea un correo electrónico válido
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Expresión regular para validar el formato de correo electrónico
+        
+        if (!value || !emailRegex.test(value)) { // Verifica si el valor ingresado coincide con el formato de correo electrónico
+            return 'Ingresa un correo electrónico válido para continuar';
+        }
     },
     allowOutsideClick: false // Impide que se clickee afuera del recuadro de sweet alert
 })
@@ -35,7 +39,7 @@ socket.on('messageLogs', data => {
     let messages = '' // Almacena los mensajes
     data.forEach(message => {
         // Formatea el mensaje con el nombre de usuario del remitente y el contenido del mensaje
-        messages += `<li>${message.user} -  dice: ${message.message}</li><br>`
+        messages += `<li>${message.user}: ${message.message}</li><br>`
     })
     // Actualiza el contenido del registro de mensajes con los mensajes formateados
     log.innerHTML = messages

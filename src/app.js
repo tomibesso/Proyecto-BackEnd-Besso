@@ -8,8 +8,9 @@ import { __dirname } from "./utils.js";
 import productsSocket from "./utils/productsSocket.js";
 import { uploader } from "./multer.js";
 import handlebars from "express-handlebars";
-import ProductManager from "./dao/ProductManagerFS.js";
 import mongoose from "mongoose";
+import { productsModel } from "./dao/models/productsModel.js";
+import { messagesModel } from "./dao/models/messagesModel.js"
 
 const app = express();
 
@@ -65,24 +66,33 @@ app.use((error, req, res, next) => {
 })
 
 // inicia conexión de Socket.IO (handshake) para el manager de productos
-io.on('connection', (socket) => {
+io.on('connection', async (socket) => {
     console.log('Nuevo cliente conectado');
 
-    const productManager = new ProductManager();
-    const products = productManager.getProducts();
+    const products = await productsModel.find({})
 
     socket.emit('productos', products); // envía(emit) los productos a través del socket "productos" que recibe socket.on("productos") en home.js
 });
 
-let messages = [] 
-
 // inicia conexión de Socket.IO (handshake) para el chat
 io.on('connection', socket => {
     console.log('Cliente conectado')
+    // Escucha(on) los mensajes enviados(emit) por "chat.js"
+    socket.on('message', async data => {
+        console.log('message data: ', data);
 
-    socket.on('message', data => { // Recibe(on) el mensaje desde "chat.js"
-        console.log('message data: ', data)
-        messages.push(data) // guarda los mensajes en array "messages"
-        socket.emit('messageLogs', messages) // envía(emit) los mensajes a través del socket "messageLogs" que recibe socke.on("messageLogs") en chat.js
-    })
-})
+        try {
+            // Guarda el nuevo mensaje en la base de datos
+            await messagesModel.create({
+                user: data.user,
+                message: data.message
+            });
+
+            // Emite el evento "messageLogs" con los mensajes actualizados al cliente
+            const messages = await messagesModel.find(); // Obtén todos los mensajes de la base de datos
+            socket.emit('messageLogs', messages); // Envía los mensajes al cliente para actualizar la interfaz de usuario
+        } catch (error) {
+            console.error('Error al guardar el mensaje:', error);
+        }
+    });
+});
