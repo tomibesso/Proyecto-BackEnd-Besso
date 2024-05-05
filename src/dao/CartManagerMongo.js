@@ -21,20 +21,20 @@ export default class CartManager {
     async addProductToCart(cartId, productId) {
         try {
             const cart = await cartsModel.findById(cartId); // Buscamos el carrito por su ID
-            if (!cart) {
+            if (!cart) { // validación en caso de que el carrito no exista
                 console.error(`Carrito ${cartId} no encontrado`);
                 return false;
             }
     
-            const filter = { _id: cartId };
-            const update = { $inc: { "products.$[elem].quantity": 1 } };
-            const options = { arrayFilters: [{ "elem.product": productId }] };
+            const filter = { _id: cartId }; // identificamos el carrito a actualizar
+            const update = { $inc: { "products.$[elem].quantity": 1 } }; // utilizamos $inc para incrementar la cant. de la prop. quantity dentro del producto
+            const options = { arrayFilters: [{ "elem.product": productId }] }; // especificamos filtros de arrays para identificar el elemento del producto a actualizar.
             
             // Verificamos si el producto ya está en el carrito
             const existingProduct = cart.products.find(item => item.product.toString() === productId);
 
             if (existingProduct) { // Si el producto ya está en el carrito, aumentamos su cantidad
-                await cartsModel.updateOne(filter, update, options);
+                await cartsModel.updateOne(filter, update, options); // actualizamos el documento en la base de datos
                 console.log('Producto existente aumentado en 1 unidad');
             } else {
                 // Si el producto no está en el carrito, lo agregamos con cantidad 1
@@ -42,7 +42,7 @@ export default class CartManager {
                 console.log(`Producto ${productId} agregado al carrito ${cartId}`);
             }
 
-            await cart.save();
+            await cart.save(); // guardamos los cambios nuevamente en la base de datos
             return true;
         } catch (error) {
             console.error(`Error al agregar producto al carrito ${cartId}:`, error);
@@ -70,7 +70,7 @@ export default class CartManager {
 
     // Método para obtener un carrito por su ID
     async getCartById(cartId) {
-        const cartById = await cartsModel.findById({_id: cartId});
+        const cartById = await cartsModel.findById({_id: cartId}); // obtenemos el carrito por ID
         if (cartById) {
             return cartById;
         } else {

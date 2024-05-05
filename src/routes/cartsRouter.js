@@ -2,7 +2,7 @@ import { Router } from "express";
 import CartManager from "../dao/CartManagerMongo.js";
 
 const router = Router();
-const cartManager = new CartManager();
+const cartManager = new CartManager(); // instanciamos la clase CartManager
 
 
 // Método(petición) POST para agregar un nuevo carrito
@@ -16,12 +16,12 @@ router.get('/:cid', async (req, res) => {
     const cartId = req.params.cid; // Obtiene el ID del carrito de los parámetros de la solicitud
     const cart = await cartManager.getCartById(cartId); // Utiliza el método para obtener el carrito por su ID
 
-    if (!cart) {
+    if (!cart) { // verifica si el carrito existe
         res.status(404).send({ status: 'error', message: 'No se encontró el carrito' });
         return;
     }
 
-    if (cart.products.length === 0) {
+    if (cart.products.length === 0) { // verifica si el carrito contiene productos
         console.error(`El carrito con ID ${cartId} no tiene productos`);
         res.status(404).send({ status: 'error', message: 'El carrito no tiene productos' });
         return;
