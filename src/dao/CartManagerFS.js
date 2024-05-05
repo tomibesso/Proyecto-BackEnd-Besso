@@ -1,5 +1,5 @@
 import fs from "fs";
-import ProductManager from "./ProductManagerFS.js";
+import ProductManager from "../ProductManagerFS.js";
 
 const path = "./src/JSON/Carritos.json";
 
