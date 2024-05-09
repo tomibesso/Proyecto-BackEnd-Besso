@@ -8,9 +8,9 @@ import { __dirname } from "./utils.js";
 import productsSocket from "./utils/productsSocket.js";
 import { uploader } from "./multer.js";
 import handlebars from "express-handlebars";
-import mongoose from "mongoose";
 import { productsModel } from "./dao/models/productsModel.js";
 import { messagesModel } from "./dao/models/messagesModel.js"
+import { connectDb } from './config/index.js'
 
 const app = express();
 
@@ -32,10 +32,8 @@ app.use(express.json()); // Convierte los datos JSON en un objeto Javascript
 app.use(express.urlencoded({extended:true})); // permite que Express analice y decodifique los datos de formularios HTML 
 app.use(express.static(__dirname + "/public")); // Define la ruta de la carpeta /public para definir archivos estaticos
 
-
-// conectar con mongo (despues se lleva a otro archivo)
-mongoose.connect("mongodb+srv://tomibesso:tomi2024@clusterecommercetomi.auhhpid.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=ClusterEcommerceTomi")
-
+// ejecuto la funcion para conectarme a la base de datos
+connectDb();
 
 // Configuración del motor de plantillas Handlebars
 app.engine('hbs', handlebars.engine({
