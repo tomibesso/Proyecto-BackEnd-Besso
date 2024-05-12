@@ -21,16 +21,60 @@ export default class productManager {
     }
 
     // Método para obtener todos los productos
-    async getProducts() {
+    async getProducts(limit = 10, numPage = 1, sortProperty = "price", sort, category, stock) {
         try {
+            let sortOption = {}; // Objeto para el ordenamiento
+    
+            // Si se proporciona el parámetro sort y es "asc" o "desc", se configura el objeto de ordenamiento
+            if (sort && (sort === "asc" || sort === "desc")) {
+                sortOption = { [sortProperty]: sort };
+            }
+
+            let query = {}; // Query para filtrar los productos
+
+            // Si se proporciona la categoría, se agrega a la consulta
+            if (category ) {
+                query.category = category;
+            }
+            // Si se proporciona el stock, se agrega a la consulta
+            if (stock) {
+            query.stock = stock;
+            }
+    
             // Obtiene todos los productos de la base de datos
-            const products = await productsModel.find();
-            return products;
+            const { docs, page, totalDocs, hasPrevPage, hasNextPage } = await productsModel.paginate(query, {
+                limit: limit,
+                page: numPage,
+                sort: sortOption, // Se aplica el ordenamiento según corresponda
+                lean: true
+            });
+
+            const totalPages = Math.ceil(totalDocs / parseInt(limit));
+
+            const baseUrl = '/api/products';
+
+            const prevLink = hasPrevPage ? `${baseUrl}?numPage=${page - 1}` : null;
+            const nextLink = hasNextPage ? `${baseUrl}?numPage=${page + 1}` : null;
+
+            return {
+                status: "success",
+                payload: docs,
+                totalPages: totalPages,
+                prevPage: page > 1 ? page - 1 : null,
+                nextPage: page < totalPages ? page + 1 : null,
+                page: page,
+                hasPrevPage: hasPrevPage,
+                hasNextPage: hasNextPage,
+                prevLink: prevLink,
+                nextLink: nextLink
+            };
+
         } catch (error) {
             console.error("Error al obtener productos:", error);
             return [];
         }
-    }
+    }    
+    
 
     // Método para obtener un producto por ID
     async getProductById(id) {

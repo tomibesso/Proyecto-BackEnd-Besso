@@ -1,11 +1,10 @@
 import { Router } from "express";
-import ProductManager from "../dao/ProductManagerFS.js";
+import ProductManager from "../dao/ProductManagerMongo.js";
 
 const router = Router();
-const path = "./Productos.json"
 
-const instanciaProducts = new ProductManager(path); // Crea una instancia de ProductManager
-const products = instanciaProducts.getProducts(); // Guarda en la const los productos con el método de ProductManager
+const productsService = new ProductManager(); // Crea una instancia de ProductManager
+const products = productsService.getProducts(); // Guarda en la const los productos con el método de ProductManager
 
 const user = {
     username: "Tomibesso",
@@ -15,7 +14,7 @@ const user = {
 }
 
 // Método(petición) para mostrar el usuario y productos (no se actualiza solo)
-router.get("/", (req, res) => {
+router.get("/home", (req, res) => {
     res.render("home", { // Renderiza la pantilla de "home.hbs" la cual tiene los datos del usuario y los productos
         username: user.username,
         name: user.name,

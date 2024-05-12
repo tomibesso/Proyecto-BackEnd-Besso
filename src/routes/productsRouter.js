@@ -7,23 +7,10 @@ const router = Router();
 
 // Método(petición) para obtener todos los productos
 router.get("/", async (req, res) => {
-    let products = await ProductManager.getProducts(); // Obtiene todos los productos
+    let { limit, numPage, sort, category, stock} = req.query
+    let result = await ProductManager.getProducts(limit, numPage, "price", sort, category, stock); // Obtiene todos los productos
 
-    let { limit } = req.query; // Obtiene el parámetro de consulta "limit"
-
-    // Si no se proporciona un límite, devuelve todos los productos
-    if (!limit) {
-        res.send(products);
-        return;
-    }
-
-    // Si se proporciona un límite válido, devuelve una cantidad específica de productos
-    if (!isNaN(limit) && (limit <= 10)) {
-        products = products.slice(0, limit);
-        res.send(products);
-    } else {
-        res.status(400).send("El límite debe ser un número menor o igual a 10");
-    }
+    res.send(result)
 });
 
 // Método(petición) para obtener un producto por su ID
