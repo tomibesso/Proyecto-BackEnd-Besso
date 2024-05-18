@@ -105,7 +105,7 @@ export default class CartManager {
 
     // Método para obtener un carrito por su ID
     async getCartById(cartId) {
-        const cartById = await cartsModel.findById(cartId).populate('products.product'); // obtenemos el carrito por ID
+        const cartById = await cartsModel.findById(cartId).populate('products.product') // obtenemos el carrito por ID
         if (cartById) {
             return cartById;
         } else {

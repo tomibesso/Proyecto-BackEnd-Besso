@@ -37,7 +37,11 @@ connectDb();
 
 // Configuración del motor de plantillas Handlebars
 app.engine('hbs', handlebars.engine({
-    extname: '.hbs'
+    extname: '.hbs',
+    runtimeOptions: {
+        allowProtoPropertiesByDefault: true,
+        allowProtoMethodsByDefault: true
+    }
 }))
 app.set("views", __dirname+"/views")
 app.set("view engine", "hbs")

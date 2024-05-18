@@ -1,9 +1,11 @@
 import { Router } from "express";
 import ProductManager from "../dao/ProductManagerMongo.js";
+import CartManager from "../dao/CartManagerMongo.js"
 
 const router = Router();
 
 const productsService = new ProductManager(); // Crea una instancia de ProductManager
+const cartService = new CartManager(); // Crea una instancia de CartManager
 
 const user = {
     username: "Tomibesso",
@@ -53,7 +55,6 @@ router.get('/chat', (req, res) => {
 router.get('/products', async (req, res) => {
     const { limit, numPage, sort, category, stock} = req.query
     const result = await productsService.getProducts(limit, numPage, "price", sort, category, stock); // Obtiene todos los productos
-    console.log(result);
 
     res.render('products', {
         products: result.payload,
@@ -80,6 +81,19 @@ router.get('/products/:pid', async (req, res) => {
         category: result.category
     }
     )
+})
+
+router.get('/carts/:cid', async (req, res) => {
+    const { cid } = req.params
+    const result = await cartService.getCartById(cid)
+
+    if (!result) {
+        return res.status(404).send({ status: 'error', message: 'Carrito no encontrado' });
+    }
+
+    res.render('cart', {
+        cart: result.products
+    })
 })
 
 export default router;
