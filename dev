@@ -1,0 +1,6 @@
+
+> src@1.0.0 start
+> node src/app.js
+
+Base de datos conectada
+Server escuchando en el puerto 8080

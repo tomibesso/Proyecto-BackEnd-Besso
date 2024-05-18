@@ -1,5 +1,4 @@
 import { Router } from "express";
-import { productsModel } from "../dao/models/productsModel.js";
 import productManager from "../dao/ProductManagerMongo.js";
 
 const ProductManager = new productManager();

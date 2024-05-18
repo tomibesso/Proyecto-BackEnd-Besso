@@ -51,7 +51,7 @@ export default class productManager {
 
             const totalPages = Math.ceil(totalDocs / parseInt(limit));
 
-            const baseUrl = '/api/products';
+            const baseUrl = '/products';
 
             const prevLink = hasPrevPage ? `${baseUrl}?numPage=${page - 1}` : null;
             const nextLink = hasNextPage ? `${baseUrl}?numPage=${page + 1}` : null;
@@ -80,7 +80,7 @@ export default class productManager {
     async getProductById(id) {
         try {
             // Busca un producto por su ID en la base de datos
-            const product = await productsModel.findById(id);
+            const product = await productsModel.findById(id).lean();
             if (!product) {
                 console.error("Producto no encontrado");
             }
