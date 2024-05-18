@@ -41,7 +41,7 @@ router.get("/realtimeproducts", async (req, res) => {
         lastName: user.lastName,
         role: user.role === 'admin',
         title: 'E-Commerce Tomi Besso',
-        produresultcts: result.payload,
+        products: result.payload,   
         styles: "productsStyles.css",
     })
 })
@@ -73,6 +73,7 @@ router.get('/products/:pid', async (req, res) => {
     const result = await productsService.getProductById(pid)
 
     res.render('productDetail', {
+        id: pid,
         title: result.title,
         descirption: result.description,
         price: result.price,
@@ -92,7 +93,8 @@ router.get('/carts/:cid', async (req, res) => {
     }
 
     res.render('cart', {
-        cart: result.products
+        cart: result.products,
+        productId: result.products._id
     })
 })
 

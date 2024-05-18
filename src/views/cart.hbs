@@ -3,11 +3,12 @@
     {{#each cart}}
     <div class="cart-item">
         <h2>{{product.title}}</h2>
+        <p>Id: {{product._id}}</p>
         <p><strong>Descripción:</strong> {{product.description}}</p>
         <p><strong>Precio:</strong> ${{product.price}}</p>
         <p><strong>Categoría:</strong> {{product.category}}</p>
         <p><strong>Cantidad:</strong> {{quantity}}</p>
-        <button onclick="removeFromCart('{{_id}}')">Eliminar del Carrito</button>
+        <button onclick="removeFromCart('{{this.product._id}}')">Eliminar del Carrito</button>
     </div>
     {{/each}}
 </div>
