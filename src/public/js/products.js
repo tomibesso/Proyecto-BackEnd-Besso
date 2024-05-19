@@ -22,19 +22,22 @@ function addToCart(productId) {
 
 function removeFromCart(productId) {
     console.log(`saco producto ${productId}`);
-    fetch(`/api/carts/66365f682bbd296adfa43a01/product/${productId}`, {
+    fetch(`/api/carts/66365f682bbd296adfa43a01/products/${productId}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json'
         }
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === 'success') {
-            alert('Producto eliminado del carrito.');
-            location.reload(); // Recarga la página para actualizar el carrito
+    .then(response => {
+        if (response.ok) { // Verificar si la respuesta HTTP es un estado exitoso (2xx)
+            return response.json().then(data => {
+                alert('Producto eliminado del carrito.');
+                location.reload(); // Recarga la página para actualizar el carrito
+            });
         } else {
-            alert('Error al eliminar el producto del carrito.');
+            return response.json().then(data => {
+                throw new Error(data.message || 'Error eliminando el producto del carrito');
+            });
         }
     })
     .catch(error => console.error('Error:', error));

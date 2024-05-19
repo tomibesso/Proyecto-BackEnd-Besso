@@ -121,8 +121,10 @@ export default class CartManager {
     
             if (result.modifiedCount > 0) { // valida que al menos un documento fue modificado
                 console.log("Producto eliminado con éxito.");
+                return true;
             } else {
                 console.log("El producto no se encontró en el carrito");
+                return false;
             }
         } catch (error) {
             console.error("Error al eliminar producto del carrito:", error);
