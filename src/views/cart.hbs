@@ -1,7 +1,7 @@
 <h1>Carrito de Compras</h1>
 <div class="cart">
     {{#each cart}}
-    <div class="cart-item">
+    <div class="cartItem">
         <h2>{{product.title}}</h2>
         <p>Id: {{product._id}}</p>
         <p><strong>Descripción:</strong> {{product.description}}</p>
@@ -11,6 +11,9 @@
         <button onclick="removeFromCart('{{this.product._id}}')">Eliminar del Carrito</button>
     </div>
     {{/each}}
+</div>
+<div class="keepBuying">
+<a href="/products">SEGUIR COMPRANDO</a>
 </div>
 
 <script src="/js/products.js"></script>

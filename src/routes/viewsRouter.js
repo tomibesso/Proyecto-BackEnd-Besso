@@ -64,7 +64,8 @@ router.get('/products', async (req, res) => {
         prevPage: result.prevPage,
         prevLink: result.prevLink,
         nextLink: result.nextLink,
-        page: result.page
+        page: result.page,
+        title: "E-Commerce Tomi - Productos"
     })
 })
 
@@ -74,12 +75,13 @@ router.get('/products/:pid', async (req, res) => {
 
     res.render('productDetail', {
         id: pid,
-        title: result.title,
+        productTitle: result.title,
         descirption: result.description,
         price: result.price,
         code: result.code,
         stock: result.stock,
-        category: result.category
+        category: result.category,
+        title: "E-Commerce Tomi - Detalle"
     }
     )
 })
@@ -94,7 +96,8 @@ router.get('/carts/:cid', async (req, res) => {
 
     res.render('cart', {
         cart: result.products,
-        productId: result.products._id
+        productId: result.products._id,
+        title: "E-Commerce Tomi - Carrito",
     })
 })
 
