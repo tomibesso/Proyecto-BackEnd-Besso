@@ -10,9 +10,29 @@ function addToCart(productId) {
     .then(response => response.json())
     .then(data => {
         if (data.status === 'success') {
-            alert('Producto agregado al carrito.');
+            Toastify({
+                text: "Producto agregado al carrito",
+                duration: 2000,
+                gravity: "top",
+                position: "left",
+                style: {
+                  background: "linear-gradient(to right, #1ECE1B, #69D96C)",
+                  border: "2px solid black",
+                  borderRadius: "5px"
+                },
+              }).showToast();
         } else {
-            alert('Error al agregar el producto al carrito.');
+            Toastify({
+                text: "Error al agregar el producto al carrito.",
+                duration: 2000,
+                gravity: "top",
+                position: "left",
+                style: {
+                  background: "linear-gradient(to right, #FF0101, #FF6B6B)",
+                  border: "2px solid black",
+                  borderRadius: "5px"
+                },
+              }).showToast();
         }
     })
     .catch(error => console.error('Error:', error));
@@ -31,8 +51,17 @@ function removeFromCart(productId) {
     .then(response => {
         if (response.ok) { // Verificar si la respuesta HTTP es un estado exitoso (2xx)
             return response.json().then(data => {
-                alert('Producto eliminado del carrito.');
-                location.reload(); // Recarga la página para actualizar el carrito
+                Toastify({
+                    text: "Producto eliminado del carrito",
+                    duration: 2000,
+                    gravity: "top",
+                    position: "left",
+                    style: {
+                      background: "linear-gradient(to right, #1ECE1B, #69D96C)",
+                      border: "2px solid black"
+                    },
+                  }).showToast();
+                setTimeout(() => {location.reload()}, 2000); // Recarga la página para actualizar el carrito
             });
         } else {
             return response.json().then(data => {
