@@ -1,4 +1,5 @@
-import { Schema, model } from "mongoose"; 
+import { Schema, model } from "mongoose";
+import mongoosePaginate from "mongoose-paginate-v2";
 
 const userCollection = "users"; // Defino el nombre de la colección
 
@@ -8,10 +9,14 @@ const userSchema = new Schema({
     lastName: String,
     email: {
         type: String,
-        unique: true,
-        required: true
+        unique: true
+    },
+    password: {
+        type: String
     }
 })
+
+userSchema.plugin(mongoosePaginate)
 
 // Crea el modelo de usuario utilizando el esquema definido y lo exporta
 export const usersModel = model(userCollection, userSchema)

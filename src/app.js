@@ -1,8 +1,15 @@
 import express from "express";
+
 import productsRouter from "./routes/productsRouter.js";
 import cartsRouter from "./routes/cartsRouter.js";
 import viewsRouter from "./routes/viewsRouter.js";
 import usersRouter from "./routes/usersRouter.js";
+import { sessionsRouter } from './routes/sessionsRouter.js'
+
+import cookieParser from 'cookie-parser'
+import session from 'express-session'
+import MongoStore from 'connect-mongo'
+
 import { Server } from "socket.io"
 import { __dirname } from "./utils.js";
 import productsSocket from "./utils/productsSocket.js";
@@ -32,6 +39,21 @@ app.use(express.json()); // Convierte los datos JSON en un objeto Javascript
 app.use(express.urlencoded({extended:true})); // permite que Express analice y decodifique los datos de formularios HTML 
 app.use(express.static(__dirname + "/public")); // Define la ruta de la carpeta /public para definir archivos estaticos
 
+app.use(cookieParser('s3cr3t@F1rma'))
+app.use(session({
+    store: MongoStore.create({
+        mongoUrl: 'mongodb://127.0.0.1:27017/c53145',
+        mongoOptions: {
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        },
+        ttl: 60 * 60 * 1000 * 24
+    }),
+    secret: 's3cr3etC@d3r',
+    resave: true,
+    saveUninitialized: true
+}))
+
 // ejecuto la funcion para conectarme a la base de datos
 connectDb();
 
@@ -60,6 +82,7 @@ app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
 app.use('/api/users', usersRouter);
 app.use('/', viewsRouter);
+app.use('/api/sessions', sessionsRouter)
 
 // Manejo de errores del servidor
 app.use((error, req, res, next) => {
