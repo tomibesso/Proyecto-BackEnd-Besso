@@ -2,15 +2,10 @@ import { usersModel } from "./models/usersModel.js";
 
 export default class userManager {
     // Método para agregar un nuevo usuario 
-    async addUser(firstName, lastName, email, password) {
+    async addUser(userData) {
         try {
             // Guarda el nuevo usuario en la base de datos
-            const newUser = await usersModel.create({
-                firstName,
-                lastName,
-                email,
-                password
-            });
+            const newUser = await usersModel.create(userData);
             console.log("Usuario agregado correctamente:", newUser);
         } catch (error) {
             console.error("Error al agregar usuario:", error);
@@ -66,6 +61,20 @@ export default class userManager {
         try {
             // Busca un usuario por su ID en la base de datos
             const user = await usersModel.findById(id).lean();
+            if (!user) {
+                console.error("Usuario no encontrado");
+            }
+            return user;
+        } catch (error) {
+            console.error("Error al obtener usuario por ID:", error);
+        }
+    }
+
+    // Método para obtener un usuario por filtro
+    async getUserBy(filter) {
+        try {
+            // Busca un usuario por su ID en la base de datos
+            const user = await usersModel.findOne(filter).lean();
             if (!user) {
                 console.error("Usuario no encontrado");
             }

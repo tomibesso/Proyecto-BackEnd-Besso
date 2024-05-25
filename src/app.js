@@ -42,12 +42,12 @@ app.use(express.static(__dirname + "/public")); // Define la ruta de la carpeta 
 app.use(cookieParser('s3cr3t@F1rma'))
 app.use(session({
     store: MongoStore.create({
-        mongoUrl: 'mongodb://127.0.0.1:27017/c53145',
+        mongoUrl: "mongodb+srv://tomibesso:tomi2024@clusterecommercetomi.auhhpid.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=ClusterEcommerceTomi",
         mongoOptions: {
             useNewUrlParser: true,
             useUnifiedTopology: true
         },
-        ttl: 60 * 60 * 1000 * 24
+        ttl: 1
     }),
     secret: 's3cr3etC@d3r',
     resave: true,
