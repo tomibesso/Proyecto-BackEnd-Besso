@@ -1,11 +1,14 @@
 import { Router } from "express";
 import ProductManager from "../dao/ProductManagerMongo.js";
 import CartManager from "../dao/CartManagerMongo.js"
+import userManager from "../dao/UserManagerMongo.js";
+import { auth } from "../middlewares/authMiddleware.js";
 
 const router = Router();
 
 const productsService = new ProductManager(); // Crea una instancia de ProductManager
 const cartService = new CartManager(); // Crea una instancia de CartManager
+const userService = new userManager(); // Crea una instancia de UserManager
 
 const user = {
     username: "Tomibesso",
@@ -107,6 +110,36 @@ router.get('/register', (req, res) => {
 
 router.get('/login', (req, res) => {
     res.render('login')
+})
+
+router.get('/profile', async (req, res) => {
+    try {
+        if (!req.session.user) {
+            console.error("No user in session");
+            return res.status(401).send({ status: "error", error: "No user in session" });
+        }
+        const email = req.session.user.email;
+        const user = await userService.getUserBy({ email });
+        
+        if (!user) {
+            return res.status(404).send({ status: "error", error: "Usuario no encontrado" });
+        }
+
+        res.render('profile', { user });
+    } catch (error) {
+        console.error("Error al obtener perfil del usuario", error);
+    }
+})
+
+router.get('/users', auth, async (req, res) => {
+    const limit = parseInt(req.query.limit) || 10;
+    const page = parseInt(req.query.page) || 1;
+    const sort = req.query.sort || 'asc';
+    const sortProperty = req.query.sortProperty || 'lastName';
+
+    const usersData = await userService.getUsers(limit, page, sortProperty, sort);
+    
+    res.render('users', { users: usersData });
 })
 
 export default router;

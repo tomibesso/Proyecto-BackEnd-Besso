@@ -1,0 +1,42 @@
+<main>
+        <h1>Users List</h1>
+
+    {{#if users.payload}}
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Email</th>
+                    <th>Edad</th>
+                    <th>Rol</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each users.payload}}
+                    <tr>
+                        <td>{{this.firstName}}</td>
+                        <td>{{this.lastName}}</td>
+                        <td>{{this.email}}</td>
+                        <td>{{this.age}}</td>
+                        <td>{{this.role}}</td>
+                    </tr>
+                {{/each}}
+            </tbody>
+        </table>
+
+        <div class="pagination">
+            {{#if users.prevLink}}
+                <a href="{{users.prevLink}}">Anterior</a>
+            {{/if}}
+
+            <span>Página {{users.page}} de {{users.totalPages}}</span>
+
+            {{#if users.nextLink}}
+                <a href="{{users.nextLink}}">Siguiente</a>
+            {{/if}}
+        </div>
+    {{else}}
+        <p>No users found.</p>
+    {{/if}}
+</main>

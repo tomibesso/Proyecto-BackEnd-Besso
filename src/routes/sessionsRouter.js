@@ -16,11 +16,12 @@ sessionsRouter.post('/login', async (req, res) => {
 
         req.session.user = {
             email,
-            admin: userFound.role === 'admin'
+            admin: userFound.role === 'admin',
+            firstName: userFound.firstName
         }
 
         console.log(req.session.user)
-        res.send('login success')
+        res.redirect('/products')
     } catch (error) {
         console.log(error);
     }
