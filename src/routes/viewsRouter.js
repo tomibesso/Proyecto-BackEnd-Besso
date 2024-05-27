@@ -68,7 +68,9 @@ router.get('/products', async (req, res) => {
         prevLink: result.prevLink,
         nextLink: result.nextLink,
         page: result.page,
-        title: "E-Commerce Tomi - Productos"
+        title: "E-Commerce Tomi - Productos",
+        styles: "./public/css/productsStyles.css",
+        user: req.session.user
     })
 })
 
@@ -105,29 +107,38 @@ router.get('/carts/:cid', async (req, res) => {
 })
 
 router.get('/register', (req, res) => {
-    res.render('register')
+    if(req.session.user) return res.send("Ya estas logueado")
+    res.render('register', {
+        title: "E-Commerce Tomi - Registrarse"
+    })
 })
 
 router.get('/login', (req, res) => {
-    res.render('login')
+    if(req.session.user) return res.send("Ya estas logueado")
+    res.render('login', {
+        title: "E-Commerce Tomi - Loguearse"
+    })
 })
 
 router.get('/profile', async (req, res) => {
-    try {
-        if (!req.session.user) {
-            console.error("No user in session");
-            return res.status(401).send({ status: "error", error: "No user in session" });
+    if (req.session.user) {        
+        try {
+            const email = req.session.user.email;
+            const user = await userService.getUserBy({ email });
+            
+            if (!user) {
+                return res.status(404).send({ status: "error", error: "Usuario no encontrado" });
+            }
+    
+            res.render('profile', {
+                user,
+                title: "E-Commerce Tomi - Perfil"
+            });
+        } catch (error) {
+            console.error("Error al obtener perfil del usuario", error);
         }
-        const email = req.session.user.email;
-        const user = await userService.getUserBy({ email });
-        
-        if (!user) {
-            return res.status(404).send({ status: "error", error: "Usuario no encontrado" });
-        }
-
-        res.render('profile', { user });
-    } catch (error) {
-        console.error("Error al obtener perfil del usuario", error);
+    } else {
+        res.redirect('login')
     }
 })
 
@@ -139,7 +150,10 @@ router.get('/users', auth, async (req, res) => {
 
     const usersData = await userService.getUsers(limit, page, sortProperty, sort);
     
-    res.render('users', { users: usersData });
+    res.render('users', {
+        users: usersData,
+        title: "E-Commerce Tomi - Usuarios"
+    });
 })
 
 export default router;

@@ -17,7 +17,8 @@ sessionsRouter.post('/login', async (req, res) => {
         req.session.user = {
             email,
             admin: userFound.role === 'admin',
-            firstName: userFound.firstName
+            firstName: userFound.firstName,
+            lastName: userFound.lastName
         }
 
         console.log(req.session.user)
@@ -52,8 +53,12 @@ sessionsRouter.post('/register', async (req, res) => {
 })
 
 sessionsRouter.get('/logout', (req, res) => {
-    req.session.destroy( err => {
-        if(err) return res.send({status: 'error', error: err})
-        else return res.send('logout')
-    })
-})
+    req.session.destroy(err => {
+        if(err) {
+            console.error("Error al cerrar sesión:", err);
+            return res.status(500).send({ status: 'error', error: 'Error al cerrar sesión' });
+        }
+        console.log("Sesión cerrada correctamente");
+        return res.status(200).send({ status: 'success', message: 'Sesión cerrada correctamente' });
+    });
+});
