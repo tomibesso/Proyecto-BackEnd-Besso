@@ -32,13 +32,13 @@ router.get("/:uid", async (req, res) => {
 
 // Método(petición) POST para crear un nuevo usuario
 router.post("/", async (req, res) => {
-    const { firstName, lastName, email, password } = req.body; // Obtiene los datos del nuevo usuario desde el body de la petición(req)
+    const { firstName, lastName, email, password, age } = req.body; // Obtiene los datos del nuevo usuario desde el body de la petición(req)
 
     if (!email) return res.status(400).send({ status: "Error", error: "Completa los campos obligatorios." });
 
     try {
         // Crea un nuevo usuario con los datos proporcionados usando el método del manager
-        const result = await UserManager.addUser(firstName, lastName, email, password);
+        const result = await UserManager.addUser(firstName, lastName, email, password, age);
         res.send({ status: "Success", payload: result });
     } catch (error) {
         res.status(500).send({ status: "Error", error: error.message });

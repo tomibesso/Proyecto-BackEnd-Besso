@@ -7,8 +7,10 @@ export default class userManager {
             // Guarda el nuevo usuario en la base de datos
             const newUser = await usersModel.create(userData);
             console.log("Usuario agregado correctamente:", newUser);
+            return newUser;
         } catch (error) {
             console.error("Error al agregar usuario:", error);
+            throw error;
         }
     }
 
@@ -77,10 +79,12 @@ export default class userManager {
             const user = await usersModel.findOne(filter).lean();
             if (!user) {
                 console.error("Usuario no encontrado");
+                return null;
             }
             return user;
         } catch (error) {
             console.error("Error al obtener usuario por ID:", error);
+            throw error;
         }
     }
 

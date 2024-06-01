@@ -9,6 +9,8 @@ import { sessionsRouter } from './routes/sessionsRouter.js'
 import cookieParser from 'cookie-parser'
 import session from 'express-session'
 import MongoStore from 'connect-mongo'
+import passport from "passport";
+import { initializePassport } from "./config/passportConfig.js";
 
 import { Server } from "socket.io"
 import { __dirname } from "./utils.js";
@@ -53,6 +55,10 @@ app.use(session({
     resave: true,
     saveUninitialized: true
 }))
+
+initializePassport()
+app.use(passport.initialize())
+app.use(passport.session())
 
 // ejecuto la funcion para conectarme a la base de datos
 connectDb();
