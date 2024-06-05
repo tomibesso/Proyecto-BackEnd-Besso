@@ -1,5 +1,5 @@
 export function auth(req, res, next) {
-    if(req.session?.user?.admin) {
+    if(req.sessions?.user?.admin) {
         return next()
     }
 

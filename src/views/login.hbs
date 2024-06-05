@@ -1,11 +1,11 @@
 <main>
     <h1>Iniciar Sesiòn</h1>
-    <form action="api/sessions/login" method="POst">
+    <form id="formLogin" action="/api/sessions/login" method="post">
         <label>Email</label>
-        <input type="text" name="email">
+        <input type="text" name="email" required>
         <label>Contraseña</label>
-        <input type="password" name="password">
-        <button>Ingresar</button>
+        <input type="password" name="password" required>
+        <button type="submit">Ingresar</button>
         <a href="/register">Registrarse</a>
     </form>
 

@@ -3,6 +3,10 @@ import ProductManager from "../dao/ProductManagerMongo.js";
 import CartManager from "../dao/CartManagerMongo.js"
 import userManager from "../dao/UserManagerMongo.js";
 import { auth } from "../middlewares/authMiddleware.js";
+import { authTokenMiddleware } from "../utils/jsonwebtokens.js";
+import passport from 'passport';
+import { passportCall }  from "../utils/passportCall.js";
+import { authorization } from "../utils/authorizationJWT.js";
 
 const router = Router();
 
@@ -70,7 +74,7 @@ router.get('/products', async (req, res) => {
         page: result.page,
         title: "E-Commerce Tomi - Productos",
         styles: "./public/css/productsStyles.css",
-        user: req.session.user
+        user: req.user
     })
 })
 
@@ -107,23 +111,23 @@ router.get('/carts/:cid', async (req, res) => {
 })
 
 router.get('/register', (req, res) => {
-    if(req.session.user) return res.send("Ya estas logueado")
+    if(req.user) return res.send("Ya estas logueado")
     res.render('register', {
         title: "E-Commerce Tomi - Registrarse"
     })
 })
 
 router.get('/login', (req, res) => {
-    if(req.session.user) return res.send("Ya estas logueado")
+    if(req.user) return res.send("Ya estas logueado")
     res.render('login', {
         title: "E-Commerce Tomi - Loguearse"
     })
 })
 
 router.get('/profile', async (req, res) => {
-    if (req.session.user) {        
+    if (req.user) {        
         try {
-            const email = req.session.user.email;
+            const email = req.user.email;
             const user = await userService.getUserBy({ email });
             
             if (!user) {
@@ -142,14 +146,13 @@ router.get('/profile', async (req, res) => {
     }
 })
 
-router.get('/users', auth, async (req, res) => {
+router.get('/users', passportCall('jwt'), authorization('admin'), async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const page = parseInt(req.query.page) || 1;
     const sort = req.query.sort || 'asc';
     const sortProperty = req.query.sortProperty || 'lastName';
 
-    const usersData = await userService.getUsers(limit, page, sortProperty, sort);
-    
+    const usersData = await userService.getUsers(limit, page, sortProperty, sort); 
     res.render('users', {
         users: usersData,
         title: "E-Commerce Tomi - Usuarios"
