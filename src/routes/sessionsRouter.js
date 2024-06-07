@@ -3,9 +3,11 @@ import userManager from '../dao/UserManagerMongo.js';
 import { createHash, isValidPassword } from '../utils/bcrypt.js';
 import passport from 'passport';
 import { generateToken, authTokenMiddleware, PRIVATE_KEY } from '../utils/jsonwebtokens.js';
+import CartManager from '../dao/CartManagerMongo.js';
 
 export const sessionsRouter = Router()
 const userService = new userManager()
+const cartsService = new CartManager()
 
 sessionsRouter.post('/login', async (req, res) => {
     try {
@@ -44,13 +46,16 @@ sessionsRouter.post('/register', async (req, res) => {
     
         const userExists = await userService.getUserBy({email})
         if(userExists) return res.status(401).send({status:"error", error: "Usuario existente"})
+
+        const userCart = await cartsService.addCart()
     
         const newUser = {
             firstName,
             lastName,
             email,
             age,
-            password: createHash(password)
+            password: createHash(password),
+            cartId: userCart._id
         }    
     
         const result = await userService.addUser(newUser)
