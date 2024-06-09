@@ -14,26 +14,4 @@
     </div>
 </main>
 
-<script>
-    async function login(event) {
-        event.preventDefault();
-
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-
-        const response = await fetch('/api/sessions/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email, password }),
-        });
-
-        if (response.ok) {
-            window.location.href = '/products' // Redirigir a la página de productos si el login es exitoso
-        } else {
-            const result = await response.json();
-            alert(`Error: ${result.error}`);
-        }
-    }
-</script>
+<script src="/js/login.js"></script>

@@ -1,5 +1,5 @@
     <h1 style="margin-bottom: 50px;">Productos</h1>
-    <h3>Bienvenido al E-Commerce</h3>
+    <h3>Bienvenido {{user.firstName}} {{user.lastName}} al E-Commerce</h3>
     {{#if products.length}}
         <div class="productsList">
             {{#each products}}

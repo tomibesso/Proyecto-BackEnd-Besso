@@ -75,7 +75,7 @@ export default class userManager {
     // Método para obtener un usuario por filtro
     async getUserBy(filter) {
         try {
-            // Busca un usuario por su ID en la base de datos
+            // Busca un usuario en la base de datos de acuerdo al filtro
             const user = await usersModel.findOne(filter).lean();
             if (!user) {
                 console.error("Usuario no encontrado");
@@ -83,7 +83,7 @@ export default class userManager {
             }
             return user;
         } catch (error) {
-            console.error("Error al obtener usuario por ID:", error);
+            console.error("Error al obtener usuario por filtro:", error);
             throw error;
         }
     }
