@@ -1,17 +1,21 @@
 <h1>Carrito de Compras</h1>
-<div class="cart">
-    {{#each cart}}
-    <div class="cartItem">
-        <h2>{{product.title}}</h2>
-        <p>Id: {{product._id}}</p>
-        <p><strong>Descripción:</strong> {{product.description}}</p>
-        <p><strong>Precio:</strong> ${{product.price}}</p>
-        <p><strong>Categoría:</strong> {{product.category}}</p>
-        <p><strong>Cantidad:</strong> {{quantity}}</p>
-        <button onclick="removeFromCart('{{this.product._id}}')">Eliminar del Carrito</button>
+{{#if products.length}}
+    <div class="cart">
+        {{#each cart}}
+        <div class="cartItem">
+            <h2>{{product.title}}</h2>
+            <p>Id: {{product._id}}</p>
+            <p><strong>Descripción:</strong> {{product.description}}</p>
+            <p><strong>Precio:</strong> ${{product.price}}</p>
+            <p><strong>Categoría:</strong> {{product.category}}</p>
+            <p><strong>Cantidad:</strong> {{quantity}}</p>
+            <button onclick="removeFromCart('{{this.product._id}}')">Eliminar del Carrito</button>
+        </div>
+        {{/each}}
     </div>
-    {{/each}}
-</div>
+{{else}}
+    <p>No hay productos en el carrito.</p>
+{{/if}}
 <div class="keepBuying">
 <a href="/products">SEGUIR COMPRANDO</a>
 </div>
