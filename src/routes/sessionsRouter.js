@@ -101,14 +101,7 @@ sessionsRouter.post('/register', async (req, res) => {
 // })
 
 sessionsRouter.get('/logout', (req, res) => {
-    req.session.destroy(err => {
-        if(err) {
-            console.error("Error al cerrar sesión:", err);
-            return res.status(500).send({ status: 'error', error: 'Error al cerrar sesión' });
-        }
-        console.log("Sesión cerrada correctamente");
-        return res.status(200).send({ status: 'success', message: 'Sesión cerrada correctamente' });
-    });
+    res.clearCookie('TomiCookieToken').redirect('/login');
 });
 
 sessionsRouter.get('/github', passport.authenticate('github', {scope: 'user: email'}), async (req, res) => {})
@@ -119,6 +112,11 @@ sessionsRouter.get('/githubcallback', passport.authenticate('github', {failureRe
 })
 
 
-// sessionsRouter.get('/current', (req, res) => {
-//     res.send(req.user)
-// })
+sessionsRouter.get('/current', passport.authenticate('current', { session: false }), (req, res) => {
+    try {
+        // Si la autenticación es exitosa, req.user contendrá la información del usuario
+        res.send({ status: "success", user: req.user });
+    } catch (error) {
+        res.status(401).send({ status: "error", message: "No está autenticado" });
+    }
+});

@@ -59,6 +59,10 @@ router.get('/chat', (req, res) => {
         styles: './public/css/chatStyles.css' })
 })
 
+router.get('/', (req, res) => {
+    res.redirect('/products')
+})
+
 router.get('/products', async (req, res) => {
     const { limit, numPage, sort, category, stock} = req.query
     const result = await productsService.getProducts(limit, numPage, "price", sort, category, stock); // Obtiene todos los productos
@@ -73,8 +77,7 @@ router.get('/products', async (req, res) => {
         nextLink: result.nextLink,
         page: result.page,
         title: "E-Commerce Tomi - Productos",
-        styles: "./public/css/productsStyles.css",
-        user: req.user
+        styles: "./public/css/productsStyles.css"
     })
 })
 
@@ -111,14 +114,14 @@ router.get('/carts/:cid', async (req, res) => {
 })
 
 router.get('/register', (req, res) => {
-    if(req.user) return res.send("Ya estas logueado")
+    if(req.cookies['TomiCookieToken']) return res.send("Ya estas logueado");
     res.render('register', {
         title: "E-Commerce Tomi - Registrarse"
     })
 })
 
 router.get('/login', (req, res) => {
-    if(req.user) return res.send("Ya estas logueado")
+    if(req.cookies['TomiCookieToken']) return res.send("Ya estas logueado");
     res.render('login', {
         title: "E-Commerce Tomi - Loguearse"
     })
@@ -158,5 +161,7 @@ router.get('/users', passportCall('jwt'), authorization('admin'), async (req, re
         title: "E-Commerce Tomi - Usuarios"
     });
 })
+
+router.get('/current', )
 
 export default router;

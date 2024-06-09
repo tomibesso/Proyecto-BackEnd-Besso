@@ -1,16 +1,43 @@
 <main>
     <h1>Registrarse</h1>
-    <form action="api/sessions/register" method="POST">
+    <form id="formRegister" onsubmit="register(event)">
         <label>Nombre</label>
-        <input type="text" name="firstName">
+        <input type="text" name="firstName" id="firstName" required>
         <label>Apellido</label>
-        <input type="text" name="lastName">
+        <input type="text" name="lastName" id="lastName" required>
         <label>Mail</label>
-        <input type="email" name="email">
+        <input type="email" name="email" id="email" required>
         <label>Edad</label>
-        <input type="number" name="age">
+        <input type="number" name="age" id="age" required>
         <label>Contraseña</label>
-        <input type="password" name="password">
-        <button>Registrarse</button>
+        <input type="password" name="password" id="password" required>
+        <button type="submit">Registrarse</button>
     </form>
 </main>
+
+<script>
+    async function register(event) {
+        event.preventDefault();
+
+        const firstName = document.getElementById('firstName').value;
+        const lastName = document.getElementById('lastName').value;
+        const email = document.getElementById('email').value;
+        const age = document.getElementById('age').value;
+        const password = document.getElementById('password').value;
+
+        const response = await fetch('/api/sessions/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ firstName, lastName, email, age, password }),
+        });
+
+        if (response.ok) {
+            window.location.href = '/login'
+        } else {
+            const result = await response.json();
+            alert(`Error: ${result.error}`);
+        }
+    }
+</script>

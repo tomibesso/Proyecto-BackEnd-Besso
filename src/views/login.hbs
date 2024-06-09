@@ -1,10 +1,10 @@
 <main>
-    <h1>Iniciar Sesiòn</h1>
-    <form id="formLogin" action="/api/sessions/login" method="post">
+    <h1>Iniciar Sesión</h1>
+    <form id="formLogin" onsubmit="login(event)">
         <label>Email</label>
-        <input type="text" name="email" required>
+        <input type="text" name="email" id="email" required>
         <label>Contraseña</label>
-        <input type="password" name="password" required>
+        <input type="password" name="password" id="password" required>
         <button type="submit">Ingresar</button>
         <a href="/register">Registrarse</a>
     </form>
@@ -13,3 +13,27 @@
         <a href="/api/sessions/github">Github</a>
     </div>
 </main>
+
+<script>
+    async function login(event) {
+        event.preventDefault();
+
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        const response = await fetch('/api/sessions/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password }),
+        });
+
+        if (response.ok) {
+            window.location.href = '/products' // Redirigir a la página de productos si el login es exitoso
+        } else {
+            const result = await response.json();
+            alert(`Error: ${result.error}`);
+        }
+    }
+</script>
