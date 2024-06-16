@@ -5,7 +5,7 @@ import productsRouter from "./API/productsRouter.js";
 import cartsRouter from "./API/cartsRouter.js";
 import viewsRouter from "./viewsRouter.js";
 import usersRouter from "./API/usersRouter.js";
-import { sessionsRouter } from './API/sessionsRouter.js'
+import sessionsRouter from './API/sessionsRouter.js'
 
 const router = Router();
 

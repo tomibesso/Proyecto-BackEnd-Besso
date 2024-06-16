@@ -1,5 +1,6 @@
 import express from "express";
 import cookieParser from 'cookie-parser'
+import session from 'express-session';
 import passport from "passport";
 import { Server } from "socket.io"
 import handlebars from "express-handlebars";
@@ -12,6 +13,7 @@ import productsSocket from "./utils/productsSocket.js";
 import { productsModel } from "./dao/models/productsModel.js";
 import { messagesModel } from "./dao/models/messagesModel.js"
 import { connectDb } from './config/index.js'
+import MongoStore from 'connect-mongo';
 
 const app = express();
 
@@ -34,23 +36,23 @@ app.use(express.urlencoded({extended:true})); // permite que Express analice y d
 app.use(express.static(__dirname + "/public")); // Define la ruta de la carpeta /public para definir archivos estaticos
 
 app.use(cookieParser('s3cr3t@F1rma'))
-// app.use(session({
-//     store: MongoStore.create({
-//         mongoUrl: "mongodb+srv://tomibesso:tomi2024@clusterecommercetomi.auhhpid.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=ClusterEcommerceTomi",
-//         mongoOptions: {
-//             useNewUrlParser: true,
-//             useUnifiedTopology: true
-//         },
-//         ttl: 60*60*24
-//     }),
-//     secret: 's3cr3etC@d3r',
-//     resave: true,
-//     saveUninitialized: true
-// }))
+app.use(session({
+    store: MongoStore.create({
+        mongoUrl: "mongodb+srv://tomibesso:tomi2024@clusterecommercetomi.auhhpid.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=ClusterEcommerceTomi",
+        mongoOptions: {
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        },
+        ttl: 60*60*24
+    }),
+    secret: 's3cr3etC@d3r',
+    resave: true,
+    saveUninitialized: true
+}))
 
 initializePassport()
 app.use(passport.initialize())
-// app.use(passport.session())
+app.use(passport.session())
 
 // ejecuto la funcion para conectarme a la base de datos
 connectDb();

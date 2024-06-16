@@ -1,7 +1,6 @@
 import passport from "passport";
 import local from "passport-local";
 import userManager from "../dao/UserDAOMongo.js";
-import { isValidPassword, createHash } from "../utils/bcrypt.js";
 import GithubStrategy from 'passport-github2';
 import jwt from 'passport-jwt';
 import { PRIVATE_KEY } from "../utils/jsonwebtokens.js";

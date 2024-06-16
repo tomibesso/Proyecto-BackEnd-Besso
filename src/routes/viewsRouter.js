@@ -171,6 +171,4 @@ router.get('/users', passportCall('jwt'), authorization('admin'), async (req, re
     });
 })
 
-router.get('/current', )
-
 export default router;
