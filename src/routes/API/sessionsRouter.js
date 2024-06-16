@@ -1,9 +1,9 @@
 import {Router} from 'express';
-import userManager from '../dao/UserManagerMongo.js';
-import { createHash, isValidPassword } from '../utils/bcrypt.js';
+import userManager from '../../dao/UserDAOMongo.js';
+import { createHash, isValidPassword } from '../../utils/bcrypt.js';
 import passport from 'passport';
-import { generateToken, authTokenMiddleware, PRIVATE_KEY } from '../utils/jsonwebtokens.js';
-import CartManager from '../dao/CartManagerMongo.js';
+import { generateToken, authTokenMiddleware, PRIVATE_KEY } from '../../utils/jsonwebtokens.js';
+import CartManager from '../../dao/CartDAOMongo.js';
 
 export const sessionsRouter = Router()
 const userService = new userManager()

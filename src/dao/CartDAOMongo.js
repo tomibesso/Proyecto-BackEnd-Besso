@@ -1,10 +1,10 @@
 import { cartsModel } from "./models/cartsModel.js";
-import productManager from "./ProductManagerMongo.js";
+import productManager from "./ProductDAOMongo.js";
 
 const ProductManager = new productManager
 
 
-export default class CartManager {
+export default class cartManager {
 
     // Método para agregar un nuevo carrito
     async addCart() {

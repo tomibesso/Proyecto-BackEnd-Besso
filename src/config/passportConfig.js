@@ -1,6 +1,6 @@
 import passport from "passport";
 import local from "passport-local";
-import userManager from "../dao/UserManagerMongo.js";
+import userManager from "../dao/UserDAOMongo.js";
 import { isValidPassword, createHash } from "../utils/bcrypt.js";
 import GithubStrategy from 'passport-github2';
 import jwt from 'passport-jwt';
@@ -12,7 +12,7 @@ const LocalStrategy = local.Strategy
 const JWTStrategy = jwt.Strategy
 const ExtractJWT = jwt.ExtractJwt
 
-// instanciamos el userManagerMongo
+// instanciamos el userDAOMongo
 const userService = new userManager()
 
 export const initializePassport = () => {

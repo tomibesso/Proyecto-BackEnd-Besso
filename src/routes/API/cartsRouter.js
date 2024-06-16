@@ -1,5 +1,5 @@
 import { Router } from "express";
-import CartManager from "../dao/CartManagerMongo.js";
+import CartManager from "../../dao/CartDAOMongo.js";
 
 const router = Router();
 const cartManager = new CartManager(); // instanciamos la clase CartManager

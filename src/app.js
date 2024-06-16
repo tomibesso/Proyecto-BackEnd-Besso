@@ -1,22 +1,14 @@
 import express from "express";
-
-import productsRouter from "./routes/productsRouter.js";
-import cartsRouter from "./routes/cartsRouter.js";
-import viewsRouter from "./routes/viewsRouter.js";
-import usersRouter from "./routes/usersRouter.js";
-import { sessionsRouter } from './routes/sessionsRouter.js'
-
 import cookieParser from 'cookie-parser'
-import session from 'express-session'
-import MongoStore from 'connect-mongo'
 import passport from "passport";
+import { Server } from "socket.io"
+import handlebars from "express-handlebars";
+
+import routerApp from "./routes/index.js"
 import { initializePassport } from "./config/passportConfig.js";
 
-import { Server } from "socket.io"
 import { __dirname } from "./utils.js";
 import productsSocket from "./utils/productsSocket.js";
-import { uploader } from "./multer.js";
-import handlebars from "express-handlebars";
 import { productsModel } from "./dao/models/productsModel.js";
 import { messagesModel } from "./dao/models/messagesModel.js"
 import { connectDb } from './config/index.js'
@@ -74,27 +66,7 @@ app.engine('hbs', handlebars.engine({
 app.set("views", __dirname+"/views")
 app.set("view engine", "hbs")
 
-// Ruta para subir archivos
-app.use('/subir-archivo', uploader.single('myFile') ,(req, res) => {
-    if (!req.file) {
-        return res.send('no se puede subir el archivo')        
-    }
-    
-    res.send('archivo subido')
-})
-
-// Configuración de las rutas
-app.use('/api/products', productsRouter);
-app.use('/api/carts', cartsRouter);
-app.use('/api/users', usersRouter);
-app.use('/', viewsRouter);
-app.use('/api/sessions', sessionsRouter)
-
-// Manejo de errores del servidor
-app.use((error, req, res, next) => {
-    console.log(error)
-    res.status(500).send('Error 500 en el server')
-})
+app.use(routerApp)
 
 // inicia conexión de Socket.IO (handshake) para el manager de productos
 io.on('connection', async (socket) => {

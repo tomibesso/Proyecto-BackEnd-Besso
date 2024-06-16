@@ -1,7 +1,7 @@
 import { Router } from "express";
-import ProductManager from "../dao/ProductManagerMongo.js";
-import CartManager from "../dao/CartManagerMongo.js"
-import userManager from "../dao/UserManagerMongo.js";
+import ProductManager from "../dao/ProductDAOMongo.js";
+import CartManager from "../dao/CartDAOMongo.js"
+import userManager from "../dao/UserDAOMongo.js";
 import { auth } from "../middlewares/authMiddleware.js";
 import { authTokenMiddleware } from "../utils/jsonwebtokens.js";
 import passport from 'passport';
