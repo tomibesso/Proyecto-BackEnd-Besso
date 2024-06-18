@@ -6,13 +6,13 @@ class cartController {
     }
 
     addCart = async (req, res) => {
-        const newCart = await cartManager.addCart(); // Utiliza el metodo para agregar un carrito de la clase CartManager
+        const newCart = await this.cartService.addCart(); // Utiliza el metodo para agregar un carrito de la clase CartManager
         res.status(200).send({ status: 'success', cart: newCart });
     }
 
     getCartById = async (req, res) => {
         const cartId = req.params.cid; // Obtiene el ID del carrito de los parámetros de la solicitud
-        const cart = await cartManager.getCartById(cartId); // Utiliza el método para obtener el carrito por su ID
+        const cart = await this.cartService.getCartById(cartId); // Utiliza el método para obtener el carrito por su ID
     
         if (!cart) { // verifica si el carrito existe
             res.status(404).send({ status: 'error', message: 'No se encontró el carrito' });
@@ -31,7 +31,7 @@ class cartController {
     addProductToCart = async (req, res) => {
         const cartId = req.params.cid; // Pasa a numero el params pasado
         const productId = req.params.pid; // Pasa a numero el params pasado
-        const addProduct = await cartManager.addProductToCart(cartId, productId); // Utiliza el metodo de CartManager para agregar el producto al carrito
+        const addProduct = await this.cartService.addProductToCart(cartId, productId); // Utiliza el metodo de CartManager para agregar el producto al carrito
         if (addProduct) {
             res.status(200).send({ status: 'success', message: 'Producto agregado al carrito' });
         } else {
@@ -42,7 +42,7 @@ class cartController {
     deleteProductsFromCart = async (req, res) => {
         const cartId = req.params.cid; // Pasa a numero el params pasado
         const productId = req.params.pid; // Pasa a numero el params pasado
-        const deleteProduct = await cartManager.deleteProductsFromCart(cartId, productId);
+        const deleteProduct = await this.cartService.deleteProductsFromCart(cartId, productId);
         if(deleteProduct) {
             res.status(200).send({ status: 'success', message: 'Producto eliminado del carrito exitosamente'})
         } else {
@@ -55,7 +55,7 @@ class cartController {
         const newProducts = req.body.products; // Suponiendo que los productos se envían en el cuerpo de la solicitud bajo la clave "products"
     
         try {
-            const updatedCart = await cartManager.updateCart(cartId, newProducts);
+            const updatedCart = await this.cartService.updateCart(cartId, newProducts);
     
             if (updatedCart) {
                 return res.status(200).json({
@@ -84,7 +84,7 @@ class cartController {
         const newQuantity = req.body.quantity; // Envio por body el campo "quantity" con el numero actualizado
     
         try {
-            const updatedCart = await cartManager.updateProductQuantity(cartId, productId, newQuantity);
+            const updatedCart = await this.cartService.updateProductQuantity(cartId, productId, newQuantity);
     
             return res.status(200).json({
                 status: "success",
@@ -104,7 +104,7 @@ class cartController {
         const cartId = req.params.cid
     
         try {  
-            const result = await cartManager.deleteAllProducts(cartId)
+            const result = await this.cartService.deleteAllProducts(cartId)
         
             res.status(200).send({status: "sucess", payload: result, message: "Productos borrados del carrito"});
         } catch (error) {
