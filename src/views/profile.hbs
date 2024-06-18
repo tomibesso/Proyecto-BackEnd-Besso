@@ -4,30 +4,21 @@
     <p>Apellido: {{user.lastName}}</p>
     <p>Email: {{user.email}}</p>
     <p>Edad: {{user.age}}</p>
-<button class="logoutBtn" id="logoutBtn" onclick="logout()">Cerrar Sesión</button>
+<button class="logoutBtn" id="logoutBtn">Cerrar Sesión</button>
 </main>
 
 <script>
-function logout() {
-    const logoutBtn = document.getElementById("logoutBtn");
-    logoutBtn.addEventListener('click', evt => {
-        fetch('/api/sessions/logout', {
-            method: 'GET',
-        })
-        .then(response => {
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+        try {
+            const response = await fetch('/api/sessions/logout', { method: 'POST' });
             if (response.ok) {
-                console.log("Sesión cerrada correctamente");
-                alert("Sesión cerrada correctamente");
+                alert('Sesión cerrada con exito')
                 window.location.href = '/login';
             } else {
-                console.error('Error al cerrar sesión:', response.statusText);
-                alert('Error al cerrar sesión. Por favor, inténtalo de nuevo.');
+                console.error('Error al cerrar sesión');
             }
-        })
-        .catch(error => {
-            console.error("Error al cerrar sesión:", error);
-            alert("Error al cerrar sesión. Por favor, inténtalo de nuevo.");
-        });
+        } catch (error) {
+            console.error('Error:', error);
+        }
     });
-}
 </script>

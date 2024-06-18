@@ -78,7 +78,6 @@ class sessionController {
 
     githubCallback = (req, res) => {
         req.session.user = req.user
-        res.redirect('/products')
     }
 
     current = (req, res) => {

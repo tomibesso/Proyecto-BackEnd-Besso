@@ -4,6 +4,7 @@ import CartManager from "../dao/CartDAOMongo.js"
 import userManager from "../dao/UserDAOMongo.js";
 import { auth } from "../middlewares/authMiddleware.js";
 import { authTokenMiddleware } from "../utils/jsonwebtokens.js";
+import optionalAuth from "../middlewares/optionalAuth.js"
 import passport from 'passport';
 import { passportCall }  from "../utils/passportCall.js";
 import { authorization } from "../utils/authorizationJWT.js";
@@ -63,14 +64,17 @@ router.get('/', (req, res) => {
     res.redirect('/products')
 })
 
-router.get('/products', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    const { limit, numPage, sort, category, stock} = req.query
+router.get('/products', optionalAuth, async (req, res) => {
+    const { limit, numPage, sort, category, stock } = req.query;
     const result = await productsService.getProducts(limit, numPage, "price", sort, category, stock); // Obtiene todos los productos
-    
-    try {       
-        const userMail = req.user.user.email
-        const user = await userService.getUserBy({ email: userMail})
-        
+
+    try {
+        let user = null;
+        if (req.user) {
+            const userMail = req.user.user.email;
+            user = await userService.getUserBy({ email: userMail });
+        }
+
         res.render('products', {
             products: result.payload,
             hasPrevPage: result.hasPrevPage,
@@ -83,11 +87,12 @@ router.get('/products', passport.authenticate('jwt', { session: false }), async 
             title: "E-Commerce Tomi - Productos",
             styles: "./public/css/productsStyles.css",
             user: user
-        })
+        });
     } catch (error) {
         console.error(error);
+        res.status(500).send({ status: "error", message: "Error al cargar los productos" });
     }
-})
+});
 
 router.get('/products/:pid', async (req, res) => {
     const { pid } = req.params
@@ -136,7 +141,7 @@ router.get('/login', (req, res) => {
     })
 })
 
-router.get('/profile', passport.authenticate('jwt', { session: false }), async (req, res) => {
+router.get('/profile', passport.authenticate('jwt', { session: false, failureRedirect: '/login' }), async (req, res) => {
     if (req.user) {        
         try {
             const email = req.user.user.email;

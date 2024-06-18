@@ -9,7 +9,7 @@ router.post('/login', login)
 
 router.post('/register', register)
 
-router.get('/logout', logout);
+router.post('/logout', logout);
 
 router.get('/github', passport.authenticate('github', {scope: 'user: email'}), async (req, res) => {})
 
