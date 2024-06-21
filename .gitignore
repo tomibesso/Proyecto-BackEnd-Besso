@@ -1,1 +1,6 @@
+# Ignorar carpeta node-modules
 node_modules/
+
+# Ignorar archivos de entorno
+.env.production
+.env.development
