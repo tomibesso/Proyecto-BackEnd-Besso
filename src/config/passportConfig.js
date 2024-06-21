@@ -3,13 +3,15 @@ import local from "passport-local";
 import userManager from "../dao/UserDAOMongo.js";
 import GithubStrategy from 'passport-github2';
 import jwt from 'passport-jwt';
-import { PRIVATE_KEY } from "../utils/jsonwebtokens.js";
+import { objectConfig } from "./index.js";
 
 // passport-local
 const LocalStrategy = local.Strategy
 // passport-jwt
 const JWTStrategy = jwt.Strategy
 const ExtractJWT = jwt.ExtractJwt
+
+const { privateKey } = objectConfig
 
 // instanciamos el userDAOMongo
 const userService = new userManager()
@@ -106,7 +108,7 @@ export const initializePassport = () => {
 
     passport.use('jwt', new JWTStrategy({
         jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
-        secretOrKey: PRIVATE_KEY
+        secretOrKey: privateKey
     }, async (jwt_payload, done) => {
         try {
             return done(null, jwt_payload)
@@ -117,7 +119,7 @@ export const initializePassport = () => {
 
     passport.use('current', new JWTStrategy({
         jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
-        secretOrKey: PRIVATE_KEY
+        secretOrKey: privateKey
     }, async (jwt_payload, done) => {
         try {
             return done(null, jwt_payload)

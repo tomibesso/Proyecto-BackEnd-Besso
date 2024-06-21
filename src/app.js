@@ -7,23 +7,20 @@ import handlebars from "express-handlebars";
 
 import routerApp from "./routes/index.js"
 import { initializePassport } from "./config/passportConfig.js";
-
 import { __dirname } from "./utils.js";
 import productsSocket from "./utils/productsSocket.js";
 import { productsModel } from "./dao/models/productsModel.js";
 import { messagesModel } from "./dao/models/messagesModel.js"
-import { connectDb } from './config/index.js'
+import { connectDb, objectConfig } from './config/index.js'
 import MongoStore from 'connect-mongo';
 
 const app = express();
-
-// Defino el puerto del servidor
-const PORT = process.env.PORT || 8080
-
+const { port, mongoURL, cookieParserSign, sessionKey } = objectConfig;
+ 
 // Creación del servidor HTTP y conexión del servidor de sockets (Socket.IO)
-const httpServer = app.listen(PORT, error => {
+const httpServer = app.listen(port, error => {
     if(error) console.log(error)
-    console.log('Server escuchando en el puerto 8080')
+    console.log(`Server escuchando en el puerto ${port}`)
 })
 const io = new Server(httpServer)
 
@@ -35,17 +32,17 @@ app.use(express.json()); // Convierte los datos JSON en un objeto Javascript
 app.use(express.urlencoded({extended:true})); // permite que Express analice y decodifique los datos de formularios HTML 
 app.use(express.static(__dirname + "/public")); // Define la ruta de la carpeta /public para definir archivos estaticos
 
-app.use(cookieParser('s3cr3t@F1rma'))
+app.use(cookieParser(cookieParserSign))
 app.use(session({
     store: MongoStore.create({
-        mongoUrl: "mongodb+srv://tomibesso:tomi2024@clusterecommercetomi.auhhpid.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=ClusterEcommerceTomi",
+        mongoUrl: mongoURL,
         mongoOptions: {
             useNewUrlParser: true,
             useUnifiedTopology: true
         },
         ttl: 60*60*24
     }),
-    secret: 's3cr3etC@d3r',
+    secret: sessionKey,
     resave: true,
     saveUninitialized: true
 }))
