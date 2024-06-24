@@ -4,6 +4,7 @@ import session from 'express-session';
 import passport from "passport";
 import { Server } from "socket.io"
 import handlebars from "express-handlebars";
+import cors from "cors";
 
 import routerApp from "./routes/index.js"
 import { initializePassport } from "./config/passportConfig.js";
@@ -31,6 +32,7 @@ app.use(productsSocket(io))
 app.use(express.json()); // Convierte los datos JSON en un objeto Javascript
 app.use(express.urlencoded({extended:true})); // permite que Express analice y decodifique los datos de formularios HTML 
 app.use(express.static(__dirname + "/public")); // Define la ruta de la carpeta /public para definir archivos estaticos
+app.use(cors());
 
 app.use(cookieParser(cookieParserSign))
 app.use(session({

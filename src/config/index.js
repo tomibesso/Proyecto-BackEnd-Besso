@@ -1,6 +1,6 @@
-import { connect } from 'mongoose';
 import dotenv from "dotenv";
 import { program } from '../utils/commander.js';
+import { MongoSingleton } from '../utils/mongoSingleton.js';
 
 const { mode } = program.opts()
 dotenv.config({
@@ -18,7 +18,6 @@ export const objectConfig = {
 }
 
 export const connectDb = () => {
-    console.log('Base de datos conectada')
-    connect(process.env.MONGO_URL)
+    MongoSingleton.getInstance()
 }
 
