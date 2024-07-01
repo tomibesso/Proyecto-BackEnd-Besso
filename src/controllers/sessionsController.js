@@ -3,6 +3,7 @@ import { generateToken } from '../utils/jsonwebtokens.js';
 
 import { UserService } from "../service/index.js"
 import { CartService } from "../service/index.js";
+import UserDto from '../dtos/usersDTO.js';
 
 class sessionController {
     constructor() {
@@ -16,7 +17,7 @@ class sessionController {
     
             if(!email || !password) return res.status(401).send({status: "error", error: "Debes completar los campos obligatorios."})
     
-            const userFound = await this.userService.getUserBy({email})
+            const userFound = await this.userService.getUser({email})
     
             if(!userFound) return res.status(401).send({status: "error", error: "Usuario sin credenciales"})
     
@@ -41,31 +42,33 @@ class sessionController {
 
     register = async (req, res) => {
         try {
-            const { firstName, lastName, email, age, password } = req.body
+            const userDto = new UserDto(req.body);
+
+            console.log(userDto);
     
-            if(!email || !password) return res.status(401).send({status: "error", error: "Debes completar los campos obligatorios."})
+            if(!userDto.email || !userDto.password) return res.status(401).send({status: "error", error: "Debes completar los campos obligatorios."})
         
-            const userExists = await userService.getUserBy({email})
+            const userExists = await this.userService.getUser({email: userDto.email})
             if(userExists) return res.status(401).send({status:"error", error: "Usuario existente"})
     
             const userCart = await this.cartsService.addCart()
         
             const newUser = {
-                firstName,
-                lastName,
-                email,
-                age,
-                password: createHash(password),
+                firstName: userDto.firstName,
+                lastName: userDto.lastName,
+                email: userDto.email,
+                age: userDto.age,
+                password: createHash(userDto.password),
                 cartId: userCart._id
-            }    
+            }; 
         
             const result = await this.userService.addUser(newUser)
             
             const token = generateToken({
                 id: result._id,
-                email,
-                firstName
-            })
+                email: userDto.email,
+                firstName: userDto.firstName
+            });
             res.send({status: "success", user: result, token: token})
         } catch (error) {
             console.log(error);

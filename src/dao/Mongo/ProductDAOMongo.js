@@ -1,8 +1,8 @@
-import { productsModel } from "./models/productsModel.js";
+import { productsModel } from "../models/productsModel.js";
 
 export default class productManager {
     // Método para agregar un nuevo producto 
-    async addProduct(title, description, price, thumbnails, code, stock, category) {
+    async create(title, description, price, thumbnails, code, stock, category) {
         try {
             // Guarda el nuevo producto en la base de datos
             const newProduct = await productsModel.create({
@@ -15,13 +15,14 @@ export default class productManager {
                 category
             });
             console.log("Producto agregado correctamente:", newProduct);
+            return newProduct
         } catch (error) {
             console.error("Error al agregar producto:", error);
         }
     }
 
     // Método para obtener todos los productos
-    async getProducts(limit = 10, numPage = 1, sortProperty = "price", sort, category, stock) {
+    async getAll(limit = 10, numPage = 1, sortProperty = "price", sort, category, stock) {
         try {
             let sortOption = {}; // Objeto para el ordenamiento
     
@@ -77,7 +78,7 @@ export default class productManager {
     
 
     // Método para obtener un producto por ID
-    async getProductById(id) {
+    async getById(id) {
         try {
             // Busca un producto por su ID en la base de datos
             const product = await productsModel.findById(id).lean();
@@ -91,7 +92,7 @@ export default class productManager {
     }
 
     // Método para actualizar un producto existente
-    async updateProduct(id, updateData) {
+    async update(id, updateData) {
         try {
             // Busca y actualiza el producto por su ID en la base de datos
             const updatedProduct = await productsModel.findByIdAndUpdate(id, updateData, { new: true });
@@ -106,7 +107,7 @@ export default class productManager {
     }
 
     // Método para eliminar el producto por ID
-    async deleteProduct(id) {
+    async delete(id) {
         try {
             // Elimina un producto por su ID de la base de datos
             const deletedProduct = await productsModel.findByIdAndDelete(id);

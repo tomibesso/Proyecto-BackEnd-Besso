@@ -6,9 +6,15 @@ class cartController {
     }
 
     addCart = async (req, res) => {
-        const newCart = await this.cartService.addCart(); // Utiliza el metodo para agregar un carrito de la clase CartManager
-        res.status(200).send({ status: 'success', cart: newCart });
+        try {
+            const newCart = await this.cartService.addCart();
+            res.status(200).send({ status: 'success', cart: newCart });
+        } catch (error) {
+            console.error('Error adding cart:', error);
+            res.status(500).send({ status: 'error', message: 'Could not add cart' });
+        }
     }
+    
 
     getCartById = async (req, res) => {
         const cartId = req.params.cid; // Obtiene el ID del carrito de los parámetros de la solicitud

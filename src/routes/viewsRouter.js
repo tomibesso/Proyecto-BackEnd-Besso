@@ -1,7 +1,7 @@
 import { Router } from "express";
-import ProductManager from "../dao/ProductDAOMongo.js";
-import CartManager from "../dao/CartDAOMongo.js"
-import userManager from "../dao/UserDAOMongo.js";
+import ProductManager from "../dao/Mongo/ProductDAOMongo.js";
+import CartManager from "../dao/Mongo/CartDAOMongo.js"
+import userManager from "../dao/Mongo/UserDAOMongo.js";
 import { auth } from "../middlewares/authMiddleware.js";
 import { authTokenMiddleware } from "../utils/jsonwebtokens.js";
 import optionalAuth from "../middlewares/optionalAuth.js"
@@ -66,13 +66,13 @@ router.get('/', (req, res) => {
 
 router.get('/products', optionalAuth, async (req, res) => {
     const { limit, numPage, sort, category, stock } = req.query;
-    const result = await productsService.getProducts(limit, numPage, "price", sort, category, stock); // Obtiene todos los productos
+    const result = await productsService.getAll(limit, numPage, "price", sort, category, stock); // Obtiene todos los productos
 
     try {
         let user = null;
         if (req.user) {
             const userMail = req.user.user.email;
-            user = await userService.getUserBy({ email: userMail });
+            user = await userService.getBy({ email: userMail });
         }
 
         res.render('products', {
@@ -96,7 +96,7 @@ router.get('/products', optionalAuth, async (req, res) => {
 
 router.get('/products/:pid', async (req, res) => {
     const { pid } = req.params
-    const result = await productsService.getProductById(pid)
+    const result = await productsService.getById(pid)
 
     res.render('productDetail', {
         id: pid,
@@ -113,7 +113,7 @@ router.get('/products/:pid', async (req, res) => {
 
 router.get('/carts/:cid', async (req, res) => {
     const { cid } = req.params
-    const result = await cartService.getCartById(cid)
+    const result = await cartService.getById(cid)
 
     if (!result) {
         return res.status(404).send({ status: 'error', message: 'Carrito no encontrado' });
@@ -145,7 +145,7 @@ router.get('/profile', passport.authenticate('jwt', { session: false, failureRed
     if (req.user) {        
         try {
             const email = req.user.user.email;
-            const user = await userService.getUserBy({email})
+            const user = await userService.getBy({email})
             
             if (!user) {
                 return res.status(404).send({ status: "error", error: "Usuario no encontrado" });
@@ -169,7 +169,7 @@ router.get('/users', passportCall('jwt'), authorization('admin'), async (req, re
     const sort = req.query.sort || 'asc';
     const sortProperty = req.query.sortProperty || 'lastName';
 
-    const usersData = await userService.getUsers(limit, page, sortProperty, sort); 
+    const usersData = await userService.getAll(limit, page, sortProperty, sort); 
     res.render('users', {
         users: usersData,
         title: "E-Commerce Tomi - Usuarios"

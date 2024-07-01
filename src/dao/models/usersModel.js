@@ -5,9 +5,20 @@ const userCollection = "users"; // Defino el nombre de la colección
 
 // Guardo en una const la plantilla o esquema de los datos del documento
 const userSchema = new Schema({
-    firstName: String,
-    lastName: String,
-    age: Number,
+    firstName: {
+        type: String,
+        required: true
+    },
+    lastName: {
+        type: String,
+        required: true
+    },
+    fullName: {
+        type: String
+    },
+    age: {
+        type: Number
+    },
     email: {
         type: String,
         unique: true
@@ -20,7 +31,7 @@ const userSchema = new Schema({
         default: 'user'
     },
     cartId: {
-        type: Schema.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'carts'
     }
 })

@@ -1,8 +1,8 @@
-import { usersModel } from "./models/usersModel.js";
+import { usersModel } from "../models/usersModel.js";
 
 export default class userManager {
     // Método para agregar un nuevo usuario 
-    async addUser(userData) {
+    async create(userData) {
         try {
             // Guarda el nuevo usuario en la base de datos
             const newUser = await usersModel.create(userData);
@@ -15,7 +15,7 @@ export default class userManager {
     }
 
     // Método para obtener todos los usuarios
-    async getUsers(limit = 10, numPage = 1, sortProperty = "lastName", sort) {
+    async getAll(limit = 10, numPage = 1, sortProperty = "lastName", sort) {
         try {
             let sortOption = {}; // Objeto para el ordenamiento
     
@@ -59,7 +59,7 @@ export default class userManager {
     }    
 
     // Método para obtener un usuario por ID
-    async getUserById(id) {
+    async getById(id) {
         try {
             // Busca un usuario por su ID en la base de datos
             const user = await usersModel.findById(id).lean();
@@ -73,7 +73,7 @@ export default class userManager {
     }
 
     // Método para obtener un usuario por filtro
-    async getUserBy(filter) {
+    async getBy(filter) {
         try {
             // Busca un usuario en la base de datos de acuerdo al filtro
             const user = await usersModel.findOne(filter).lean();
@@ -89,7 +89,7 @@ export default class userManager {
     }
 
     // Método para actualizar un usuario existente
-    async updateUser(id, updateData) {
+    async update(id, updateData) {
         try {
             // Busca y actualiza el usuario por su ID en la base de datos
             const updatedUser = await usersModel.findByIdAndUpdate(id, updateData, { new: true });
@@ -104,7 +104,7 @@ export default class userManager {
     }
 
     // Método para eliminar el usuario por ID
-    async deleteUser(id) {
+    async delete(id) {
         try {
             // Elimina un usuario por su ID de la base de datos
             const deletedUser = await usersModel.findByIdAndDelete(id);

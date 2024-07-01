@@ -12,7 +12,7 @@ import { __dirname } from "./utils.js";
 import productsSocket from "./utils/productsSocket.js";
 import { productsModel } from "./dao/models/productsModel.js";
 import { messagesModel } from "./dao/models/messagesModel.js"
-import { connectDb, objectConfig } from './config/index.js'
+import {objectConfig} from './config/index.js'
 import MongoStore from 'connect-mongo';
 
 const app = express();
@@ -52,9 +52,6 @@ app.use(session({
 initializePassport()
 app.use(passport.initialize())
 app.use(passport.session())
-
-// ejecuto la funcion para conectarme a la base de datos
-connectDb();
 
 // Configuración del motor de plantillas Handlebars
 app.engine('hbs', handlebars.engine({

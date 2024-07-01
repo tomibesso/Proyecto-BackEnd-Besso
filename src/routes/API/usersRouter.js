@@ -19,4 +19,4 @@ router.put("/:uid", updateUser);
 // Método(petición) DELETE para eliminar un usuario
 router.delete("/:uid", deleteUser);
 
-export default router; 
+export default router;

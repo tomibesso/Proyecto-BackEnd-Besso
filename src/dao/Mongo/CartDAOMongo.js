@@ -1,5 +1,5 @@
-import { cartsModel } from "./models/cartsModel.js";
-import productManager from "./ProductDAOMongo.js";
+import { cartsModel } from "../models/cartsModel.js";
+import productManager from "../Mongo/ProductDAOMongo.js";
 
 const ProductManager = new productManager
 
@@ -7,7 +7,7 @@ const ProductManager = new productManager
 export default class cartManager {
 
     // Método para agregar un nuevo carrito
-    async addCart() {
+    async create() {
         try {
             const newCart = await cartsModel.create({ products: [] }); // Crea un nuevo carrito
             console.log("Carrito agregado correctamente:", newCart);
@@ -50,7 +50,7 @@ export default class cartManager {
         }
     }
     
-    async updateCart(cartId, newProducts) {
+    async update(cartId, newProducts) {
         try {
             // Actualiza el carrito con el nuevo arreglo de productos
             const updatedCart = await cartsModel.findByIdAndUpdate(cartId, { products: newProducts }, { new: true });
@@ -77,34 +77,8 @@ export default class cartManager {
         }
     }
 
-    async updateProductQuantity(cartId, productId, newQuantity) {
-        try {
-            // Encuentra el carrito por su ID
-            const cart = await cartsModel.findById(cartId);
-
-            // Encuentra el índice del producto en el array de productos del carrito
-            const productIndex = cart.products.findIndex(product => product.product === productId);
-
-            // Si el producto no existe en el carrito, devuelve un error
-            if (productIndex === -1) {
-                throw new Error("El producto no se encontró en el carrito");
-            }
-
-            // Actualiza la cantidad del producto en el carrito
-            cart.products[productIndex].quantity = newQuantity;
-
-            // Guarda los cambios en la base de datos
-            await cart.save();
-
-            return cart;
-        } catch (error) {
-            console.error("Error al actualizar la cantidad del producto en el carrito:", error);
-            throw error;
-        }
-    }
-
     // Método para obtener un carrito por su ID
-    async getCartById(cartId) {
+    async getById(cartId) {
         const cartById = await cartsModel.findById(cartId).populate('products.product') // obtenemos el carrito por ID
         if (cartById) {
             return cartById;
@@ -113,6 +87,34 @@ export default class cartManager {
             return false;
         }
     }
+
+    async updateProductQuantity(cartId, productId, newQuantity) {
+        try {
+            // Encuentra el carrito por su ID
+            const cart = await cartsModel.findById(cartId);
+    
+            // Encuentra el producto en el array de productos del carrito por su ID
+            const productExists = cart.products.find(product => product.product.toString() === productId.toString());
+    
+            // Si el producto no existe en el carrito, lanza un error
+            if (!productExists) {
+                throw new Error("El producto no se encontró en el carrito");
+            }
+    
+            // Actualiza la cantidad del producto en el carrito
+            productExists.quantity = newQuantity;
+    
+            // Guarda los cambios en la base de datos
+            await cart.save();
+    
+            return cart;
+        } catch (error) {
+            console.error("Error al actualizar la cantidad del producto en el carrito:", error);
+            throw error;
+        }
+    }
+    
+    
     
     async deleteProductsFromCart(cartId, productId) {
         try {

@@ -1,6 +1,6 @@
 import passport from "passport";
 import local from "passport-local";
-import userManager from "../dao/UserDAOMongo.js";
+import userManager from "../dao/Mongo/UserDAOMongo.js";
 import GithubStrategy from 'passport-github2';
 import jwt from 'passport-jwt';
 import { objectConfig } from "./index.js";

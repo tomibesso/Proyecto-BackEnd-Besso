@@ -14,7 +14,8 @@ export const objectConfig = {
     cookieParserSign: process.env.COOKIE_PARSER_SIGN,
     sessionKey: process.env.SESSION_SECRET_KEY,
     userAdmin: process.env.USER_ADMIN,
-    userPassword: process.env.USER_PASSWORD    
+    userPassword: process.env.USER_PASSWORD,
+    persistence: process.env.PERSISTENCE    
 }
 
 export const connectDb = () => {
