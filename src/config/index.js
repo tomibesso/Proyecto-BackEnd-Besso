@@ -15,7 +15,14 @@ export const objectConfig = {
     sessionKey: process.env.SESSION_SECRET_KEY,
     userAdmin: process.env.USER_ADMIN,
     userPassword: process.env.USER_PASSWORD,
-    persistence: process.env.PERSISTENCE    
+    persistence: process.env.PERSISTENCE,
+    gmailUser: process.env.GMAIL_USER,
+    gmailPass: process.env.GMAIL_PASS,
+    gmailService: process.env.GMAIL_SERVICE,
+    gmailPort: process.env.GMAIL_PORT,
+    twilioSid: process.env.TWILIO_ACCOUNT_sID,
+    twilioAuthToken: process.env.TWILIO_AUTH_TOKEN,
+    twilioPhone: process.env.TWILIO_PHONE,
 }
 
 export const connectDb = () => {

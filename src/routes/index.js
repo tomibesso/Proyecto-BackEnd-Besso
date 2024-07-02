@@ -6,6 +6,7 @@ import cartsRouter from "./API/cartsRouter.js";
 import viewsRouter from "./viewsRouter.js";
 import usersRouter from "./API/usersRouter.js";
 import sessionsRouter from './API/sessionsRouter.js'
+import pruebasRouter from './API/pruebasRouter.js'
 
 const router = Router();
 
@@ -24,6 +25,7 @@ router.use('/api/carts', cartsRouter);
 router.use('/api/users', usersRouter);
 router.use('/', viewsRouter);
 router.use('/api/sessions', sessionsRouter)
+router.use('/api/pruebas', pruebasRouter)
 
 // Manejo de errores del servidor
 router.use((error, req, res, next) => {
