@@ -2,8 +2,6 @@ import { Router } from "express";
 import ProductManager from "../dao/Mongo/ProductDAOMongo.js";
 import CartManager from "../dao/Mongo/CartDAOMongo.js"
 import userManager from "../dao/Mongo/UserDAOMongo.js";
-import { auth } from "../middlewares/authMiddleware.js";
-import { authTokenMiddleware } from "../utils/jsonwebtokens.js";
 import optionalAuth from "../middlewares/optionalAuth.js"
 import passport from 'passport';
 import { passportCall }  from "../utils/passportCall.js";
@@ -55,7 +53,7 @@ router.get("/realtimeproducts", async (req, res) => {
 })
 
 // Método(petición) para mostrar el chat
-router.get('/chat', (req, res) => {
+router.get('/chat', optionalAuth, authorization('user'), (req, res) => {
     res.render('chat', { // Renderiza la plantilla "chat.hbs"
         styles: './public/css/chatStyles.css' })
 })

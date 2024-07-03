@@ -1,5 +1,7 @@
 import { Router } from "express";
 import productController from "../../controllers/productsController.js";
+import { authorization } from "../../utils/authorizationJWT.js";
+import optionalAuth from "../../middlewares/optionalAuth.js";
 
 const router = Router();
 const { getProducts, getProductsById, addProduct, updateProduct, deleteProduct} = new productController();
@@ -11,12 +13,12 @@ router.get("/", getProducts);
 router.get("/:pid", getProductsById);
 
 // Método(petición) POST para agregar un nuevo producto
-router.post('/', addProduct);
+router.post('/', optionalAuth, authorization('admin'), addProduct);
 
 // Método(petición) PUT para actualizar un producto existente
-router.put('/:pid', updateProduct);
+router.put('/:pid', optionalAuth, authorization('admin'), updateProduct);
 
 // Método(petición) DELETE para eliminar un producto
-router.delete('/:pid', deleteProduct);
+router.delete('/:pid', optionalAuth, authorization('admin'), deleteProduct);
 
 export default router;
