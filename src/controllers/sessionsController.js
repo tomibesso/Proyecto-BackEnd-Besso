@@ -4,6 +4,7 @@ import { generateToken } from '../utils/jsonwebtokens.js';
 import { UserService } from "../service/index.js"
 import { CartService } from "../service/index.js";
 import UserDto from '../dtos/usersDTO.js';
+import currentUserDto from '../dtos/currentUserDTO.js';
 
 class sessionController {
     constructor() {
@@ -85,11 +86,16 @@ class sessionController {
 
     current = (req, res) => {
         try {
-            res.send({ status: "success", user: req.user });
+          if (!req.user) {
+            return res.status(401).send({ status: "error", message: "No está autenticado" });
+          }
+    
+          const user = new currentUserDto(req.user.user); // Crear el DTO del usuario
+          res.send({ status: "success", user });
         } catch (error) {
-            res.status(401).send({ status: "error", message: "No está autenticado" });
+          res.status(500).send({ status: "error", message: error.message });
         }
-    }
+      }
 }
 
 export default sessionController;
