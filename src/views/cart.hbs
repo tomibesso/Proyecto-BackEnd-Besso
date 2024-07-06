@@ -9,7 +9,7 @@
             <p><strong>Precio:</strong> ${{product.price}}</p>
             <p><strong>Categoría:</strong> {{product.category}}</p>
             <p><strong>Cantidad:</strong> {{quantity}}</p>
-            <button onclick="removeFromCart('{{this.product._id}}')">Eliminar del Carrito</button>
+            <button onclick="removeFromCart('{{../cartId}}','{{product._id}}')">Eliminar del Carrito</button>
         </div>
         {{/each}}
     </div>

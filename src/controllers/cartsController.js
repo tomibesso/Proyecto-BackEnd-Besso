@@ -118,6 +118,10 @@ class cartController {
             res.status(500).send({status: "Error", message: "Error al eliminar los productos"})
         }
     }
+
+    purchaseProducts = async (req, res) => {
+        
+    }
 }
 
 export default cartController;

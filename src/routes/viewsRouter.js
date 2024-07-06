@@ -68,9 +68,12 @@ router.get('/products', optionalAuth, async (req, res) => {
 
     try {
         let user = null;
+        let cartId = null;
+
         if (req.user) {
             const userMail = req.user.user.email;
             user = await userService.getBy({ email: userMail });
+            cartId = user.cartId.toString();
         }
 
         res.render('products', {
@@ -84,7 +87,8 @@ router.get('/products', optionalAuth, async (req, res) => {
             page: result.page,
             title: "E-Commerce Tomi - Productos",
             styles: "./public/css/productsStyles.css",
-            user: user
+            user: user,
+            cartId: cartId
         });
     } catch (error) {
         console.error(error);
@@ -92,21 +96,36 @@ router.get('/products', optionalAuth, async (req, res) => {
     }
 });
 
-router.get('/products/:pid', async (req, res) => {
+router.get('/products/:pid', optionalAuth, async (req, res) => {
     const { pid } = req.params
     const result = await productsService.getById(pid)
 
-    res.render('productDetail', {
-        id: pid,
-        productTitle: result.title,
-        descirption: result.description,
-        price: result.price,
-        code: result.code,
-        stock: result.stock,
-        category: result.category,
-        title: "E-Commerce Tomi - Detalle"
+    try {
+        let user = null;
+        let cartId = null;
+
+        if (req.user) {
+            const userMail = req.user.user.email;
+            user = await userService.getBy({ email: userMail });
+            cartId = user.cartId.toString();
+        }
+
+        res.render('productDetail', {
+            id: pid,
+            productTitle: result.title,
+            descirption: result.description,
+            price: result.price,
+            code: result.code,
+            stock: result.stock,
+            category: result.category,
+            title: "E-Commerce Tomi - Detalle",
+            cartId: cartId
+        }
+        )
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ status: "error", message: "Error al cargar el producto" });
     }
-    )
 })
 
 router.get('/carts/:cid', async (req, res) => {
@@ -120,8 +139,8 @@ router.get('/carts/:cid', async (req, res) => {
     res.render('cart', {
         cart: result.products,
         productId: result.products._id,
-        cartId: result.cartId,
-        title: "E-Commerce Tomi - Carrito",
+        cartId: cid,
+        title: "E-Commerce Tomi - Carrito"
     })
 })
 

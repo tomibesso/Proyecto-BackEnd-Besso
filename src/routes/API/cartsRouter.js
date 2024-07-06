@@ -4,7 +4,7 @@ import { authorization } from "../../utils/authorizationJWT.js";
 import optionalAuth from "../../middlewares/optionalAuth.js";
 
 const router = Router();
-const { addCart, getCartById, addProductToCart, deleteProductsFromCart, updateCart, updateProductQuantity, deleteAllProducts } = new cartController();
+const { addCart, getCartById, addProductToCart, deleteProductsFromCart, updateCart, updateProductQuantity, deleteAllProducts, purchaseProducts } = new cartController();
 
 // Método(petición) POST para agregar un nuevo carrito
 router.post('/', optionalAuth, authorization('user'), addCart);
@@ -26,6 +26,9 @@ router.put('/:cid/products/:pid', optionalAuth, authorization('user'), updatePro
 
 // Método(petición) DELETE para eliminar todos los productos de un carrito
 router.delete('/:cid', optionalAuth, authorization('user'), deleteAllProducts)
+
+// Método(petición) POST para eliminar todos los productos de un carrito
+router.post('/:cid/purchase', optionalAuth, authorization('user'), purchaseProducts)
 
 
 

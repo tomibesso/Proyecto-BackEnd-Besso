@@ -1,7 +1,7 @@
 // implementar funcion para agregar producto al carrito
 
-function addToCart(productId) {
-    fetch(`/api/carts/66365f682bbd296adfa43a01/product/${productId}`, {
+function addToCart(cartId, productId) {
+    fetch(`/api/carts/${cartId}/product/${productId}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -40,9 +40,9 @@ function addToCart(productId) {
 
 // implementar funcion para eliminar producto del carrito
 
-function removeFromCart(productId) {
+function removeFromCart(cartId, productId) {
     console.log(`saco producto ${productId}`);
-    fetch(`/api/carts/66365f682bbd296adfa43a01/products/${productId}`, {
+    fetch(`/api/carts/${cartId}/products/${productId}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json'
