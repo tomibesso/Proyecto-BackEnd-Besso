@@ -137,7 +137,7 @@ router.get('/carts/:cid', async (req, res) => {
     }
 
     res.render('cart', {
-        cart: result.products,
+        cartInfo: result.products,
         productId: result.products._id,
         cartId: cid,
         title: "E-Commerce Tomi - Carrito"

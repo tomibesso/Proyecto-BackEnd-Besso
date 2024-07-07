@@ -20,9 +20,17 @@ const ticketSchema = new Schema({
   },
   purchaser: {
     type: String,
-    required: true,
-    unique: true
-  }
+    required: true
+  },
+  products: [{
+    productId: {
+      type: Schema.Types.ObjectId,
+      ref: 'products.product'
+    },
+    productTitle: String,
+    productPrice: Number,
+    quantity: Number
+  }]
 });
 
 export const ticketsModel = model(ticketCollection, ticketSchema);

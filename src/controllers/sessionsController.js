@@ -53,6 +53,7 @@ class sessionController {
             if(userExists) return res.status(401).send({status:"error", error: "Usuario existente"})
     
             const userCart = await this.cartsService.addCart()
+            const cartId = userCart._id.toString()
         
             const newUser = {
                 firstName: userDto.firstName,
@@ -60,7 +61,7 @@ class sessionController {
                 email: userDto.email,
                 age: userDto.age,
                 password: createHash(userDto.password),
-                cartId: userCart._id
+                cartId: cartId
             }; 
         
             const result = await this.userService.addUser(newUser)

@@ -1,7 +1,7 @@
 // implementar funcion para agregar producto al carrito
 
-function addToCart(cartId, productId) {
-    fetch(`/api/carts/${cartId}/product/${productId}`, {
+async function addToCart(cartId, productId) {
+     await fetch(`/api/carts/${cartId}/product/${productId}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -40,9 +40,9 @@ function addToCart(cartId, productId) {
 
 // implementar funcion para eliminar producto del carrito
 
-function removeFromCart(cartId, productId) {
+async function removeFromCart(cartId, productId) {
     console.log(`saco producto ${productId}`);
-    fetch(`/api/carts/${cartId}/products/${productId}`, {
+    await fetch(`/api/carts/${cartId}/products/${productId}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json'
@@ -53,7 +53,7 @@ function removeFromCart(cartId, productId) {
             return response.json().then(data => {
                 Toastify({
                     text: "Producto eliminado del carrito",
-                    duration: 2000,
+                    duration: 1000,
                     gravity: "top",
                     position: "left",
                     style: {
@@ -61,7 +61,7 @@ function removeFromCart(cartId, productId) {
                       border: "2px solid black"
                     },
                   }).showToast();
-                setTimeout(() => {location.reload()}, 2000); // Recarga la página para actualizar el carrito
+                setTimeout(() => {location.reload()}, 1000); // Recarga la página para actualizar el carrito
             });
         } else {
             return response.json().then(data => {
@@ -70,4 +70,63 @@ function removeFromCart(cartId, productId) {
         }
     })
     .catch(error => console.error('Error:', error));
+}
+
+async function purchase(cartId) {
+    try {
+        const response = await fetch(`/api/carts/${cartId}/purchase`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const result = await response.json();
+
+        if (result.status === 'success') {
+            Swal.fire({
+                icon: 'success',
+                title: 'Compra realizada',
+                text: 'Tu compra ha sido finalizada exitosamente!',
+                html: `
+                        <h3>Se enviara un mail a con el ticket de compra</h3>
+                    `,
+                confirmButtonText: 'OK'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    location.reload()
+                }
+            })
+        } else if (result.status === 'info') {
+            Swal.fire({
+                icon: 'info',
+                title: 'Sin productos',
+                text: result.message,
+                confirmButtonText: 'OK'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    location.reload()
+                }
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error en la compra',
+                text: result.message || 'Hubo un problema al realizar la compra.',
+                confirmButtonText: 'OK'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    location.reload()
+                }
+            });
+        }
+    } catch (error) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error en la compra',
+            text: 'Hubo un problema al realizar la compra.',
+            confirmButtonText: 'OK'
+        });
+        console.error('Error:', error);
+    }
 }

@@ -1,7 +1,7 @@
 <h1>Carrito de Compras</h1>
-{{#if cart}}
+{{#if cartInfo.length}}
     <div class="cart">
-        {{#each cart}}
+        {{#each cartInfo}}
         <div class="cartItem">
             <h2>{{product.title}}</h2>
             <p>Id: {{product._id}}</p>
@@ -19,5 +19,7 @@
 <div class="keepBuying">
 <a href="/products">SEGUIR COMPRANDO</a>
 </div>
+<button onclick="purchase('{{cartId}}')">Finalizar compra</button>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="/js/products.js"></script>

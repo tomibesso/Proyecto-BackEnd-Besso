@@ -1,4 +1,7 @@
 import { CartService } from "../service/index.js";
+import { ProductService } from "../service/index.js";
+import { ticketsModel } from "../dao/models/ticketModel.js";
+import { sendTicket } from "../utils/sendTicket.js";
 
 class cartController {
     constructor() {
@@ -120,7 +123,72 @@ class cartController {
     }
 
     purchaseProducts = async (req, res) => {
-        
+        const { cid } = req.params;
+
+        try {
+            const cart = await CartService.getCartById(cid);
+            if (!cart) {
+                return res.status(404).send({ status: 'error', message: 'Carrito no encontrado' });
+            }
+
+            if (cart.products.length === 0) {
+                return res.status(200).json({ status: 'info', message: 'Agrega productos al carrito para poder realizar una compra' });
+            }
+
+            let totalAmount = 0;
+            const purchasedProducts = [];
+            const failedProducts = [];
+
+            for (const item of cart.products) {
+                const product = await ProductService.getProductById(item.product._id.toString());
+
+                if (product.stock >= item.quantity) {
+                    product.stock -= item.quantity;
+                    await ProductService.updateProduct(product._id, { stock: product.stock });
+                    totalAmount += product.price * item.quantity;
+                    purchasedProducts.push({ productId: product._id, productTitle: product.title, productPrice: product.price, quantity: item.quantity });;
+                } else {
+                    failedProducts.push(item);
+                }
+            }
+
+            const ticket = await ticketsModel.create({
+                amount: totalAmount,
+                purchaser: req.user.user.email,
+                products: purchasedProducts
+            });
+
+            if (ticket) {
+                const productList = ticket.products.map(product => `<li>${product.productTitle} - ${product.quantity} x $${product.productPrice}</li>`).join('');
+            
+                sendTicket({
+                    subject: "Ticket de su compra",
+                    html: `<div>
+                        <h1>Ticket de compra</h1>
+                        <ul>
+                            <li>Usuario: ${ticket.purchaser}</li>
+                            <li>Productos:
+                                <ul>
+                                    ${productList}
+                                </ul>
+                            </li>
+                            <li>Total: $${ticket.amount}</li>
+                            <li>Fecha: ${ticket.purchase_datetime}</li>
+                            <li>Código: "${ticket.code}"</li>
+                        </ul>
+                    </div>`,
+                });
+            }
+            
+
+            cart.products = failedProducts;
+            await CartService.updateCart(cid, cart.products);
+
+            res.send({ status: 'success', ticket });
+        } catch (error) {
+            console.error(error);
+            res.status(500).send({ status: 'error', message: 'Error al finalizar la compra' });
+        }
     }
 }
 

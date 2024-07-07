@@ -16,4 +16,6 @@ export default class CartRepository {
     updateProductQuantity = async (cartId, productId, newQuantity) => await this.cartsDao.updateProductQuantity(cartId, productId, newQuantity)
     
     deleteAllProducts = async (cartId) => await this.cartsDao.deleteAllProducts(cartId)
+
+    purchaseProducts = async (cartId) => await this.cartsDao.purchaseProducts(cartId)
 }
