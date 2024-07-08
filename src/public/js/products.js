@@ -89,7 +89,7 @@ async function purchase(cartId) {
                 title: 'Compra realizada',
                 text: 'Tu compra ha sido finalizada exitosamente!',
                 html: `
-                        <h3>Se enviara un mail a con el ticket de compra</h3>
+                        <h3>Se enviara un mail con el ticket de compra</h3>
                     `,
                 confirmButtonText: 'OK'
             }).then((result) => {

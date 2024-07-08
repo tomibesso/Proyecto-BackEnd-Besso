@@ -2,6 +2,7 @@ import { CartService } from "../service/index.js";
 import { ProductService } from "../service/index.js";
 import { ticketsModel } from "../dao/models/ticketModel.js";
 import { sendTicket } from "../utils/sendTicket.js";
+import { FactorInstance } from "twilio/lib/rest/verify/v2/service/entity/factor.js";
 
 class cartController {
     constructor() {
@@ -160,6 +161,7 @@ class cartController {
 
             if (ticket) {
                 const productList = ticket.products.map(product => `<li>${product.productTitle} - ${product.quantity} x $${product.productPrice}</li>`).join('');
+                const failedProductsList = failedProducts.map(item => `<li>${item.product.title} (ID: ${item.product._id}) - x${item.quantity}</li>`).join('');
             
                 sendTicket({
                     subject: "Ticket de su compra",
@@ -175,6 +177,12 @@ class cartController {
                             <li>Total: $${ticket.amount}</li>
                             <li>Fecha: ${ticket.purchase_datetime}</li>
                             <li>Código: "${ticket.code}"</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h2>Los siguientes productos no disponian de stock:</h2>
+                        <ul>
+                            ${failedProductsList}
                         </ul>
                     </div>`,
                 });
