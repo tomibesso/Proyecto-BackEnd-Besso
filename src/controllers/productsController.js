@@ -32,6 +32,9 @@ class productController {
 
     addProduct = async (req, res) => {
         const { title, description, price, thumbnails, code, stock, category } = req.body; // Obtiene los datos del nuevo producto desde el body de la petición(req)
+
+        if(!title || !description || !price || !thumbnails || !code || !stock || !category) return res.status(401).send({status: "error", error: "Debes completar los campos obligatorios."})
+
         
         const newProduct = await this.productService.addProduct(title, description, price, thumbnails, code, stock, category); // Agrega el nuevo producto con el método de ProductManager
         res.status(200).send({ status: 'success', payload: newProduct});

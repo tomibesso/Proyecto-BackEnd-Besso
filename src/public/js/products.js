@@ -1,5 +1,3 @@
-// implementar funcion para agregar producto al carrito
-
 async function addToCart(cartId, productId) {
      await fetch(`/api/carts/${cartId}/product/${productId}`, {
         method: 'POST',
@@ -37,8 +35,6 @@ async function addToCart(cartId, productId) {
     })
     .catch(error => console.error('Error:', error));
 }
-
-// implementar funcion para eliminar producto del carrito
 
 async function removeFromCart(cartId, productId) {
     console.log(`saco producto ${productId}`);
@@ -129,4 +125,48 @@ async function purchase(cartId) {
         });
         console.error('Error:', error);
     }
+}
+
+async function createProduct(event) {
+
+    const title = document.getElementById('title').value;
+    const description = document.getElementById('description').value;
+    const price = document.getElementById('price').value;
+    const thumbnails = document.getElementById('thumbnails').value;
+    const code = document.getElementById('code').value;
+    const stock = document.getElementById('stock').value;
+    const category = document.getElementById('category').value;
+
+    const newUser = {
+        title: title,
+        description: description,
+        price: price,
+        thumbnails: thumbnails,
+        code: code,
+        stock: stock,
+        category: category
+    };
+
+    try {   
+        const response = await fetch(`/api/products`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newUser)
+        });
+
+        console.log('Respuesta del servidor al crear producto:', response.json());
+        if (response.ok) {
+            alert("Producto creado")
+        } else {
+            alert("No se pudo crear el producto")
+        }
+    } catch (error) {
+        console.error("Error al crear el producto", error);
+    }
+
+}
+
+async function updatedProduct(event) {
 }

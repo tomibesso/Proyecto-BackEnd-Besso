@@ -1,0 +1,42 @@
+<h1>Gestionador de productos</h1>
+
+<div>
+    <h2>Agregar producto:</h2>
+    <input type="text" name="title" id="title" placeholder="Título" required>
+    <input type="text" name="description" id="description" placeholder="Descripción" required>
+    <input type="number" name="price" id="price" placeholder="Precio" required>
+    <input type="text" name="thumbnails" id="thumbnails" placeholder="URL de la imagen" required>
+    <input type="text" name="code" id="code" placeholder="Código" required>
+    <input type="number" name="stock" id="stock" placeholder="Stock" required>
+    <input type="text" name="category" id="category" placeholder="Categoría" required>
+    <button onclick="createProduct(event)">Crear</button>
+</div>
+
+<div>
+    <h2>Actualizar/Modificar producto:</h2>
+    <input type="text" name="productId" id="productId" placeholder="ID de producto">
+
+    <form>
+        <input type="text" name="title" id="title" placeholder="Título">
+        <input type="text" name="description" id="description" placeholder="Descripción">
+        <input type="number" name="price" id="price" placeholder="Precio">
+        <input type="text" name="thumbnails" id="thumbnails" placeholder="URL de la imagen">
+        <input type="text" name="code" id="code" placeholder="Código">
+        <input type="number" name="stock" id="stock" placeholder="Stock">
+        <input type="text" name="category" id="category" placeholder="Categoría">
+        <button onclick="updateProduct(event)">Aceptar</button>
+    </form>
+</div>  
+
+<div>
+    <h2>Eliminar producto</h2>
+    <input type="text" name="productId" placeholder="ID del producto">
+</div>
+
+<style>
+    h2 {
+        text-align: start;
+    }
+</style>
+
+<script src="/js/products.js"></script>
