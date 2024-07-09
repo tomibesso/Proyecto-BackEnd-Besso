@@ -1,4 +1,7 @@
+import { CustomError } from "../service/errors/customError.js";
+import { generateUserError } from "../service/errors/info.js";
 import { UserService } from "../service/index.js";
+import { EError } from "../service/errors/enums.js";
 
 class userController {
     constructor() {
@@ -35,14 +38,21 @@ class userController {
     addUser = async (req, res) => {
         const { firstName, lastName, email, password, age } = req.body; // Obtiene los datos del nuevo usuario desde el body de la petición(req)
     
-        if (!email) return res.status(400).send({ status: "Error", error: "Completa los campos obligatorios." });
-    
+        // if (!email) return res.status(400).send({ status: "Error", error: "Completa los campos obligatorios." });
         try {
+            if (!firstName || !lastName || !email || !age) {
+                CustomError.createError({
+                    name: 'Error al crear el usuario',
+                    cause: generateUserError({firstName, lastName, age, email}),
+                    message: 'Error al crear el usuario',
+                    code: EError.INVALID_TYPE_ERROR
+                })
+            }
             // Crea un nuevo usuario con los datos proporcionados usando el método del manager
             const result = await this.userService.addUser(firstName, lastName, email, password, age);
             res.send({ status: "Success", payload: result });
         } catch (error) {
-            res.status(500).send({ status: "Error", error: error.message });
+           next(error)
         }
     }
 

@@ -14,6 +14,7 @@ import { productsModel } from "./dao/models/productsModel.js";
 import { messagesModel } from "./dao/models/messagesModel.js"
 import {objectConfig} from './config/index.js'
 import MongoStore from 'connect-mongo';
+import { handleErrors } from "./middlewares/errors/index.js";
 
 const app = express();
 const { port, mongoURL, cookieParserSign, sessionKey } = objectConfig;
@@ -65,6 +66,7 @@ app.set("views", __dirname+"/views")
 app.set("view engine", "hbs")
 
 app.use(routerApp)
+app.use(handleErrors)
 
 // inicia conexión de Socket.IO (handshake) para el manager de productos
 io.on('connection', async (socket) => {
