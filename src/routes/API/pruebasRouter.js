@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { sendSMS } from "../../utils/sendSMS.js";
 import { sendEmail } from "../../utils/sendMail.js";
+import { generateProducts } from "../../utils/generateProducts.js";
 
 const router = Router();
 
@@ -29,6 +30,19 @@ router.get('/sms', (req, res) => {
         res.send('Email enviado con exito')
     } catch (error) {
         console.error(error);
+    }
+})
+
+router.get('/mockingproducts', (req, res) => {
+    try {
+        let products = []
+
+        for (let i = 0; i < 100 ; i++) {            
+            products.push(generateProducts())
+        }
+        res.status(200).send({status: 'Success',  payload: products})
+    } catch (error) {
+        console.error("Error al crear productos:", error);
     }
 })
 
