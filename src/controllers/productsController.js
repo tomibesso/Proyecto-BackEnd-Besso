@@ -1,5 +1,8 @@
 import { ProductService } from "../service/index.js";
 import { productsModel } from "../dao/models/productsModel.js";
+import { CustomError } from "../service/errors/customError.js";
+import { generateProductError } from "../service/errors/info.js";
+import { EError } from "../service/errors/enums.js";
 
 class productController {
     constructor (){
@@ -30,14 +33,24 @@ class productController {
         }
     }
 
-    addProduct = async (req, res) => {
+    addProduct = async (req, res, next) => {
         const { title, description, price, thumbnails, code, stock, category } = req.body; // Obtiene los datos del nuevo producto desde el body de la petición(req)
 
-        if(!title || !description || !price || !thumbnails || !code || !stock || !category) return res.status(401).send({status: "error", error: "Debes completar los campos obligatorios."})
+        try {
+            if(!title || !description || !price || !thumbnails || !code || !stock || !category) {
+                CustomError.createError({
+                    name: 'Error al añadir el producto',
+                    cause: generateProductError({title, description, price, thumbnails, code, stock, category}),
+                    message: 'Error al añadir el producto',
+                    code: EError.INVALID_TYPE_ERROR
+                })
+            }
 
-        
-        const newProduct = await this.productService.addProduct(title, description, price, thumbnails, code, stock, category); // Agrega el nuevo producto con el método de ProductManager
-        res.status(200).send({ status: 'success', payload: newProduct});
+            const newProduct = await this.productService.addProduct(title, description, price, thumbnails, code, stock, category); // Agrega el nuevo producto con el método de ProductManager
+            res.status(200).send({ status: 'success', payload: newProduct});
+        } catch (error) {
+            next(error)
+        }
     }
 
     updateProduct = async (req, res) => {

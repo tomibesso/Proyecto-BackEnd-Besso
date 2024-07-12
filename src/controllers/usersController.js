@@ -35,7 +35,7 @@ class userController {
     }
 
     // Agregar nuevo usuario
-    addUser = async (req, res) => {
+    addUser = async (req, res, next) => {
         const { firstName, lastName, email, password, age } = req.body; // Obtiene los datos del nuevo usuario desde el body de la petición(req)
     
         // if (!email) return res.status(400).send({ status: "Error", error: "Completa los campos obligatorios." });
