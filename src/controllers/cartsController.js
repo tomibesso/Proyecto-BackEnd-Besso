@@ -2,7 +2,10 @@ import { CartService } from "../service/index.js";
 import { ProductService } from "../service/index.js";
 import { ticketsModel } from "../dao/models/ticketModel.js";
 import { sendTicket } from "../utils/sendTicket.js";
-import { FactorInstance } from "twilio/lib/rest/verify/v2/service/entity/factor.js";
+import { CustomError } from "../service/errors/customError.js";
+import { EError } from "../service/errors/enums.js";
+import { generateAddProductError, generateCartError } from "../service/errors/info.js";
+import { isValidObjectId } from "mongoose";
 
 class cartController {
     constructor() {
@@ -20,32 +23,65 @@ class cartController {
     }
     
 
-    getCartById = async (req, res) => {
+    getCartById = async (req, res, next) => {
         const cartId = req.params.cid; // Obtiene el ID del carrito de los parámetros de la solicitud
-        const cart = await this.cartService.getCartById(cartId); // Utiliza el método para obtener el carrito por su ID
-    
-        if (!cart) { // verifica si el carrito existe
-            res.status(404).send({ status: 'error', message: 'No se encontró el carrito' });
-            return;
+        
+        try {           
+            if (cartId.length !== 24) { // verifica si el carrito existe
+                CustomError.createError({
+                    name: 'Error al encontrar el carrito',
+                    cause: generateCartError({cartId}),
+                    message: 'Error al encontrar el carrito',
+                    code: EError.INVALID_PARAM
+                })
+                return;
+            }
+
+            const cart = await this.cartService.getCartById(cartId); // Utiliza el método para obtener el carrito por su ID
+            
+            if (!cart) {
+                CustomError.createError({
+                    name: 'Error al encontrar el carrito',
+                    cause: generateCartError({cartId}),
+                    message: 'Error al encontrar el carrito',
+                    code: EError.DATABASE_ERROR
+                })
+                res.status(404).send({ status: 'error', message: 'No se encontró el carrito' });
+                return;
+            }
+            
+            if (cart.products.length === 0) { // verifica si el carrito contiene productos
+                console.error(`El carrito con ID ${cartId} no tiene productos`);
+                res.status(404).send({ status: 'error', message: 'El carrito no tiene productos' });
+                return;
+            }
+
+            res.status(200).send({ status: 'success', products: cart.products });
+        } catch (error) {
+            next(error)
         }
-    
-        if (cart.products.length === 0) { // verifica si el carrito contiene productos
-            console.error(`El carrito con ID ${cartId} no tiene productos`);
-            res.status(404).send({ status: 'error', message: 'El carrito no tiene productos' });
-            return;
-        }
-    
-        res.status(200).send({ status: 'success', products: cart.products });
     }
 
-    addProductToCart = async (req, res) => {
+    addProductToCart = async (req, res, next) => {
         const cartId = req.params.cid; // Pasa a numero el params pasado
         const productId = req.params.pid; // Pasa a numero el params pasado
         const addProduct = await this.cartService.addProductToCart(cartId, productId); // Utiliza el metodo de CartManager para agregar el producto al carrito
-        if (addProduct) {
-            res.status(200).send({ status: 'success', message: 'Producto agregado al carrito' });
-        } else {
-            res.status(404).send({ status: 'error', message: 'No se pudo agregar el producto al carrito' });
+
+        try {
+            if(isValidObjectId(cartId) || isValidObjectId(productId)) { 
+                CustomError.createError({
+                    name: 'Error al añadir el producto al carrito',
+                    cause: generateAddProductError({cartId, productId}),
+                    message: 'Error al añadir el producto al carrito',
+                    code: EError.INVALID_PARAM
+                })
+            }
+
+            if (addProduct) {
+                res.status(200).send({ status: 'success', message: 'Producto agregado al carrito' });
+            }
+        } catch (error) {
+            next(error)
         }
     }
 

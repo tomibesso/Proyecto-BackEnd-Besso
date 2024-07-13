@@ -1,8 +1,9 @@
 import { ProductService } from "../service/index.js";
 import { productsModel } from "../dao/models/productsModel.js";
 import { CustomError } from "../service/errors/customError.js";
-import { generateProductError } from "../service/errors/info.js";
+import { generateGetProductError, generateProductError } from "../service/errors/info.js";
 import { EError } from "../service/errors/enums.js";
+import { isValidObjectId } from "mongoose";
 
 class productController {
     constructor (){
@@ -22,14 +23,30 @@ class productController {
     }
     
 
-    getProductsById = async (req, res) => {
+    getProductsById = async (req, res, next) => {
         const pid = req.params.pid; // Obtiene el ID del producto por params
-        const product = await this.productService.getProductById(pid); // Busca el producto por su ID
-    
-        if (product) {
+        
+        try {
+            const product = await this.productService.getProductById(pid); // Busca el producto por su ID
+            
+            if (pid.length !== 24) {
+                CustomError.createError({
+                    name: 'Error al encontrar el producto',
+                    cause: generateGetProductError({pid}),
+                    message: 'Error al encontrar el producto',
+                    code: EError.INVALID_PARAM
+                })
+                return;
+            }
+
+            if (!product) {
+                res.status(401).send({status: 'error', error: 'No se encontró el producto'})
+                return;
+            }
+
             res.send(product);
-        } else {
-            res.status(400).send(`El producto con ID: ${pid} no fue encontrado.`);
+        } catch (error) {
+            next(error)
         }
     }
 

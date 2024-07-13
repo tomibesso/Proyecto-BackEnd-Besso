@@ -19,3 +19,21 @@ export const generateProductError = (product) => {
     * category: necesita ser un string, pero se recibió ${product.category}
     `
 }
+
+export const generateCartError = (cart) => {
+    return `No se encontró el carrito con id: ${cart.cartId}`
+}
+
+export const generateAddProductError = (params) => {
+    return `Hay uno de los parametros incompletos o no válidos.
+    Parametros requeridos:
+    * cartId: necesita ser un ID de Mongo, pero se recibió ${params.cartId}
+    * productId: necesita ser un ID de Mongo, pero se recibió ${params.productId}
+    `
+}
+
+export const generateGetProductError = (product) => {
+    return `El parametro ingresado no es valido.
+    productId: necesita ser un ID de Mongo, pero se recibió ${product.pid}
+    `
+}
