@@ -15,6 +15,7 @@ import { messagesModel } from "./dao/models/messagesModel.js"
 import {objectConfig} from './config/index.js'
 import MongoStore from 'connect-mongo';
 import { handleErrors } from "./middlewares/errors/index.js";
+import { addLogger } from "./utils/loggers.js";
 
 const app = express();
 const { port, mongoURL, cookieParserSign, sessionKey } = objectConfig;
@@ -34,6 +35,7 @@ app.use(express.json()); // Convierte los datos JSON en un objeto Javascript
 app.use(express.urlencoded({extended:true})); // permite que Express analice y decodifique los datos de formularios HTML 
 app.use(express.static(__dirname + "/public")); // Define la ruta de la carpeta /public para definir archivos estaticos
 app.use(cors());
+app.use(addLogger)
 
 app.use(cookieParser(cookieParserSign))
 app.use(session({

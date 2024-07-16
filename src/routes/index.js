@@ -27,10 +27,4 @@ router.use('/', viewsRouter);
 router.use('/api/sessions', sessionsRouter)
 router.use('/api/pruebas', pruebasRouter)
 
-// Manejo de errores del servidor
-router.use((error, req, res, next) => {
-    console.log(error)
-    res.status(500).send('Error 500 en el server')
-})
-
 export default router

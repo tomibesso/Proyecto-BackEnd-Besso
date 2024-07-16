@@ -2,6 +2,7 @@ import { Router } from "express";
 import { sendSMS } from "../../utils/sendSMS.js";
 import { sendEmail } from "../../utils/sendMail.js";
 import { generateProducts } from "../../utils/generateProducts.js";
+import { faker } from "@faker-js/faker";
 
 const router = Router();
 
@@ -45,5 +46,25 @@ router.get('/mockingproducts', (req, res) => {
         console.error("Error al crear productos:", error);
     }
 })
+
+router.get('/log', (req, res) => {
+    req.logger.warning('Alerta!')
+    res.send('Logs')
+})
+
+router.get('/test/user', (req, res) => {
+    
+    const user = {
+        firstName: faker.person.firstName(),
+        lastName: faker.person.lastName(),
+        age: faker.number(),
+        email: faker.internet.email(),
+        password: faker.internet.password()
+    }
+
+    res.send({status: 'success', payload: user})
+})
+
+
 
 export default router
