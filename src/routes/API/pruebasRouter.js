@@ -65,6 +65,17 @@ router.get('/test/user', (req, res) => {
     res.send({status: 'success', payload: user})
 })
 
+router.get('/loggerTest', (req, res) => {
+    req.logger.debug('Este es un mensaje debug');
+    req.logger.http('Este es un mensaje http');
+    req.logger.info('Este es un mensaje info');
+    req.logger.warning('Este es un mensaje warning');
+    req.logger.error('Este es un mensaje error');
+    req.logger.fatal('Este es un mensaje fatal');
+
+    res.send('Test de logs generados en consola.')
+})
+
 
 
 export default router

@@ -23,6 +23,7 @@ export const objectConfig = {
     twilioSid: process.env.TWILIO_ACCOUNT_sID,
     twilioAuthToken: process.env.TWILIO_AUTH_TOKEN,
     twilioPhone: process.env.TWILIO_PHONE,
+    logger: process.env.LOGGER
 }
 
 export const connectDb = () => {

@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/app.js -m production",
+    "start": "node --watch src/app.js -m production",
     "dev": "node --watch src/app.js -m development"
   },
   "type": "module",
