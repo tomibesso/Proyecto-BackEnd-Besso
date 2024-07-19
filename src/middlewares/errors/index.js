@@ -1,7 +1,10 @@
 import { EError } from "../../service/errors/enums.js";
+import { devLogger, prodLogger } from "../../utils/loggers.js"
+
+const logger = process.env.LOGGER === 'production' ? prodLogger : devLogger
 
 export const handleErrors = (error, req, res, next) => {
-    console.log('Error cause', error.cause);
+    logger.info('Error cause', error.cause);
     switch (error.code) {
         case EError.INVALID_TYPE_ERROR:
             return res.send({status: 'Error', error: error.name})

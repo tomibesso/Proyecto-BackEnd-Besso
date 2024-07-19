@@ -6,6 +6,9 @@ import optionalAuth from "../middlewares/optionalAuth.js"
 import passport from 'passport';
 import { passportCall }  from "../utils/passportCall.js";
 import { authorization } from "../utils/authorizationJWT.js";
+import { devLogger, prodLogger } from "../utils/loggers.js";
+
+const logger = process.env.LOGGER === 'production' ? prodLogger : devLogger
 
 const router = Router();
 
@@ -91,7 +94,7 @@ router.get('/products', optionalAuth, async (req, res) => {
             cartId: cartId
         });
     } catch (error) {
-        console.error(error);
+        logger.error(error);
         res.status(500).send({ status: "error", message: "Error al cargar los productos" });
     }
 });
@@ -123,7 +126,7 @@ router.get('/products/:pid', optionalAuth, async (req, res) => {
         }
         )
     } catch (error) {
-        console.error(error);
+        logger.error(error);
         res.status(500).send({ status: "error", message: "Error al cargar el producto" });
     }
 })
@@ -173,7 +176,7 @@ router.get('/profile', passport.authenticate('jwt', { session: false, failureRed
                 title: "E-Commerce Tomi - Perfil"
             });
         } catch (error) {
-            console.error("Error al obtener perfil del usuario", error);
+            logger.error("Error al obtener perfil del usuario", error);
         }
     } else {
         res.redirect('login')

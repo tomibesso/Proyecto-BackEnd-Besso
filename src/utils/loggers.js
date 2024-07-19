@@ -20,7 +20,7 @@ const customLevelOptions = {
     }
 };
 
-const devLogger = winston.createLogger({
+export const devLogger = winston.createLogger({
     levels: customLevelOptions.levels,
     transports: [
         new winston.transports.Console({
@@ -33,7 +33,7 @@ const devLogger = winston.createLogger({
     ]
 });
 
-const prodLogger = winston.createLogger({
+export const prodLogger = winston.createLogger({
     levels: customLevelOptions.levels,
     transports: [
         new winston.transports.Console({

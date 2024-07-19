@@ -3,7 +3,9 @@ import { sendSMS } from "../../utils/sendSMS.js";
 import { sendEmail } from "../../utils/sendMail.js";
 import { generateProducts } from "../../utils/generateProducts.js";
 import { faker } from "@faker-js/faker";
+import { devLogger, prodLogger } from "../../utils/loggers.js";
 
+const logger = process.env.LOGGER === 'production' ? prodLogger : devLogger
 const router = Router();
 
 // Pruebas de mailing y mensajeria
@@ -21,7 +23,7 @@ router.get('/mail', (req, res) => {
         })
         res.send('Email enviado con exito')
     } catch (error) {
-        console.error(error);
+        logger.error(error);
     }
 })
 
@@ -30,7 +32,7 @@ router.get('/sms', (req, res) => {
         sendSMS()
         res.send('Email enviado con exito')
     } catch (error) {
-        console.error(error);
+        logger.error(error);
     }
 })
 
@@ -43,7 +45,7 @@ router.get('/mockingproducts', (req, res) => {
         }
         res.status(200).send({status: 'Success',  payload: products})
     } catch (error) {
-        console.error("Error al crear productos:", error);
+        logger.error("Error al crear productos:", error);
     }
 })
 

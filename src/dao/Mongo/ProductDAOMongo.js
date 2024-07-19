@@ -1,4 +1,5 @@
 import { productsModel } from "../models/productsModel.js";
+import { devLogger, prodLogger } from "../../utils/loggers.js";
 
 export default class productManager {
     // Método para agregar un nuevo producto 
@@ -14,10 +15,10 @@ export default class productManager {
                 stock,
                 category
             });
-            console.log("Producto agregado correctamente:", newProduct);
+            logger.info("Producto agregado correctamente:", newProduct);
             return newProduct
         } catch (error) {
-            console.error("Error al agregar producto:", error);
+            logger.error("Error al agregar producto:", error);
         }
     }
 
@@ -71,7 +72,7 @@ export default class productManager {
             };
 
         } catch (error) {
-            console.error("Error al obtener productos:", error);
+            logger.error("Error al obtener productos:", error);
             return [];
         }
     }    
@@ -83,11 +84,11 @@ export default class productManager {
             // Busca un producto por su ID en la base de datos
             const product = await productsModel.findById(id).lean();
             if (!product) {
-                console.error("Producto no encontrado");
+                logger.error("Producto no encontrado");
             }
             return product;
         } catch (error) {
-            console.error("Error al obtener producto por ID:", error);
+            logger.error("Error al obtener producto por ID:", error);
         }
     }
 
@@ -97,12 +98,12 @@ export default class productManager {
             // Busca y actualiza el producto por su ID en la base de datos
             const updatedProduct = await productsModel.findByIdAndUpdate(id, updateData, { new: true });
             if (!updatedProduct) {
-                console.error("Producto no encontrado");
+                logger.error("Producto no encontrado");
             }
-            console.log("Producto actualizado correctamente:", updatedProduct);
+            logger.info("Producto actualizado correctamente:", updatedProduct);
             return updatedProduct;
         } catch (error) {
-            console.error("Error al actualizar producto:", error);
+            logger.error("Error al actualizar producto:", error);
         }
     }
 
@@ -112,11 +113,11 @@ export default class productManager {
             // Elimina un producto por su ID de la base de datos
             const deletedProduct = await productsModel.findByIdAndDelete(id);
             if (!deletedProduct) {
-                console.error("Producto no encontrado");
+                logger.error("Producto no encontrado");
             }
-            console.log("Producto eliminado correctamente:", deletedProduct);
+            logger.info("Producto eliminado correctamente:", deletedProduct);
         } catch (error) {
-            console.error("Error al eliminar producto:", error);
+            logger.error("Error al eliminar producto:", error);
         }
     }
 }

@@ -31,13 +31,13 @@ class sessionController {
                 email,
                 role: userFound.role
             })
-            console.log("Inicio de sesión exitoso", "Token:" + token);
+            logger.info("Inicio de sesión exitoso", "Token:" + token);
             res.cookie("TomiCookieToken", token, {
                 maxAge: 60*60*1000*24,
                 httpOnly: true
             }).redirect('/products')
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
 
@@ -45,7 +45,7 @@ class sessionController {
         try {
             const userDto = new UserDto(req.body);
 
-            console.log(userDto);
+            logger.info(userDto);
     
             if(!userDto.email || !userDto.password) return res.status(401).send({status: "error", error: "Debes completar los campos obligatorios."})
         
@@ -73,7 +73,7 @@ class sessionController {
             });
             res.send({status: "success", user: result, token: token})
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
 

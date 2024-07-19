@@ -1,3 +1,7 @@
+import { devLogger, prodLogger } from "../../utils/loggers.js";
+
+const logger = process.env.LOGGER === 'production' ? prodLogger : devLogger
+
 async function addToCart(cartId, productId) {
      await fetch(`/api/carts/${cartId}/product/${productId}`, {
         method: 'POST',
@@ -33,11 +37,11 @@ async function addToCart(cartId, productId) {
               }).showToast();
         }
     })
-    .catch(error => console.error('Error:', error));
+    .catch(error => logger.error('Error:', error));
 }
 
 async function removeFromCart(cartId, productId) {
-    console.log(`saco producto ${productId}`);
+    logger.info(`saco producto ${productId}`);
     await fetch(`/api/carts/${cartId}/products/${productId}`, {
         method: 'DELETE',
         headers: {
@@ -65,7 +69,7 @@ async function removeFromCart(cartId, productId) {
             });
         }
     })
-    .catch(error => console.error('Error:', error));
+    .catch(error => logger.error('Error:', error));
 }
 
 async function purchase(cartId) {
@@ -123,7 +127,7 @@ async function purchase(cartId) {
             text: 'Hubo un problema al realizar la compra.',
             confirmButtonText: 'OK'
         });
-        console.error('Error:', error);
+        logger.error('Error:', error);
     }
 }
 
@@ -156,14 +160,14 @@ async function createProduct(event) {
             body: JSON.stringify(newUser)
         });
 
-        console.log('Respuesta del servidor al crear producto:', response.json());
+        logger.info('Respuesta del servidor al crear producto:', response.json());
         if (response.ok) {
             alert("Producto creado")
         } else {
             alert("No se pudo crear el producto")
         }
     } catch (error) {
-        console.error("Error al crear el producto", error);
+        logger.error("Error al crear el producto", error);
     }
 
 }

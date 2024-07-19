@@ -1,8 +1,11 @@
+import { devLogger, prodLogger } from '../../utils/loggers.js'
+
+const logger = process.env.LOGGER === 'production' ? prodLogger : devLogger
 const socket = io();
 
 // Escucha(on) los productos recibidos desde el servidor "app.js"
 socket.on("productos", (data) => {
-    console.log(data); // Se muestra por consola el array de productos
+    logger.info(data); // Se muestra por consola el array de productos
     const productContainer = document.getElementById("product-container"); // Selecciona el <div> donde se mostraran los productos
     productContainer.innerHTML = ""; // Limpiar contenido anterior
 

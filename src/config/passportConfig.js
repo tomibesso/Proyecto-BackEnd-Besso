@@ -4,6 +4,9 @@ import userManager from "../dao/Mongo/UserDAOMongo.js";
 import GithubStrategy from 'passport-github2';
 import jwt from 'passport-jwt';
 import { objectConfig } from "./index.js";
+import { devLogger, prodLogger } from "../utils/loggers.js";
+
+const logger = process.env.LOGGER === 'production' ? prodLogger : devLogger
 
 // passport-local
 const LocalStrategy = local.Strategy
@@ -33,7 +36,7 @@ export const initializePassport = () => {
     //         const userFound = await userService.getUserBy({ email: username });
 
     //         if (userFound) {
-    //             console.log("Usuario existente");
+    //             logger.info("Usuario existente");
     //             return done(null, false, { message: "Usuario existente" });
     //         }
 
@@ -60,7 +63,7 @@ export const initializePassport = () => {
     //     try {
     //         const userFound = await userService.getUserBy({ email: username })
     //         if(!userFound) {
-    //             console.log("Usuario No encontrado");
+    //             logger.info("Usuario No encontrado");
     //             return done(null, false)
     //         }
 
@@ -78,7 +81,7 @@ export const initializePassport = () => {
         callbackURL: 'http://localhost:8080/api/sessions/githubcallback'
     },async (accessToken, refreshToken, profile, done) => {
         try {
-            console.log(profile);
+            logger.info(profile);
             let user = await userService.getUserBy({email: profile._json.email})
             if(!user) {
                 const newUser = {

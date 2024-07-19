@@ -17,7 +17,7 @@ class cartController {
             const newCart = await this.cartService.addCart();
             res.status(200).send({ status: 'success', cart: newCart });
         } catch (error) {
-            console.error('Error adding cart:', error);
+            logger.error('Error adding cart:', error);
             res.status(500).send({ status: 'error', message: 'Could not add cart' });
         }
     }
@@ -51,7 +51,7 @@ class cartController {
             }
             
             if (cart.products.length === 0) { // verifica si el carrito contiene productos
-                console.error(`El carrito con ID ${cartId} no tiene productos`);
+                logger.error(`El carrito con ID ${cartId} no tiene productos`);
                 res.status(404).send({ status: 'error', message: 'El carrito no tiene productos' });
                 return;
             }
@@ -116,7 +116,7 @@ class cartController {
                 });
             }
         } catch (error) {
-            console.error("Error al actualizar el carrito:", error);
+            logger.error("Error al actualizar el carrito:", error);
             return res.status(500).json({
                 status: "error",
                 message: "Ocurrió un error al procesar la solicitud"
@@ -138,7 +138,7 @@ class cartController {
                 message: "Cantidad del producto actualizada exitosamente en el carrito"
             });
         } catch (error) {
-            console.error("Error al actualizar la cantidad del producto en el carrito:", error);
+            logger.error("Error al actualizar la cantidad del producto en el carrito:", error);
             return res.status(500).json({
                 status: "error",
                 message: "Ocurrió un error al procesar la solicitud"
@@ -154,7 +154,7 @@ class cartController {
         
             res.status(200).send({status: "sucess", payload: result, message: "Productos borrados del carrito"});
         } catch (error) {
-            console.error("Error al eliminar los productos del carrito");
+            logger.error("Error al eliminar los productos del carrito");
             res.status(500).send({status: "Error", message: "Error al eliminar los productos"})
         }
     }
@@ -230,7 +230,7 @@ class cartController {
 
             res.send({ status: 'success', ticket });
         } catch (error) {
-            console.error(error);
+            logger.error(error);
             res.status(500).send({ status: 'error', message: 'Error al finalizar la compra' });
         }
     }

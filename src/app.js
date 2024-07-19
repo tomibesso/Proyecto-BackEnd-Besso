@@ -16,16 +16,18 @@ import {objectConfig} from './config/index.js'
 import MongoStore from 'connect-mongo';
 import { handleErrors } from "./middlewares/errors/index.js";
 import { addLogger } from "./utils/loggers.js";
+import { devLogger, prodLogger } from "./utils/loggers.js";
 
+const logger = process.env.LOGGER === 'production' ? prodLogger : devLogger
 const app = express();
 const { port, mongoURL, cookieParserSign, sessionKey } = objectConfig;
  
 // Creación del servidor HTTP y conexión del servidor de sockets (Socket.IO)
-const httpServer = app.listen(port, error => {
-    if(error) console.log(error)
-    console.log(`Server escuchando en el puerto ${port}`)
+export const getServer = () => app.listen(port, error => {
+    if(error) logger.error(error)
+    logger.info(`Server escuchando en el puerto ${port}`)
 })
-const io = new Server(httpServer)
+const io = new Server(getServer())
 
 //  Configuración de la conexión del servidor de sockets con el manager de productos
 app.use(productsSocket(io))
@@ -72,7 +74,7 @@ app.use(handleErrors)
 
 // inicia conexión de Socket.IO (handshake) para el manager de productos
 io.on('connection', async (socket) => {
-    console.log('Nuevo cliente conectado');
+    logger.info('Nuevo cliente conectado');
 
     const products = await productsModel.find({})
 
@@ -81,10 +83,10 @@ io.on('connection', async (socket) => {
 
 // inicia conexión de Socket.IO (handshake) para el chat
 io.on('connection', socket => {
-    console.log('Cliente conectado')
+    logger.info('Cliente conectado')
     // Escucha(on) los mensajes enviados(emit) por "chat.js"
     socket.on('message', async data => {
-        console.log('message data: ', data);
+        logger.info('message data: ', data);
 
         try {
             // Guarda el nuevo mensaje en la base de datos
@@ -97,7 +99,7 @@ io.on('connection', socket => {
             const messages = await messagesModel.find(); // Obtén todos los mensajes de la base de datos
             socket.emit('messageLogs', messages); // Envía los mensajes al cliente para actualizar la interfaz de usuario
         } catch (error) {
-            console.error('Error al guardar el mensaje:', error);
+            logger.error('Error al guardar el mensaje:', error);
         }
     });
 });

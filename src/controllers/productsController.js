@@ -17,7 +17,7 @@ class productController {
             let result = await this.productService.getProducts(limit, numPage, sort, category, stock);
             res.send(result);
         } catch (error) {
-            console.error("Error al obtener productos:", error);
+            logger.error("Error al obtener productos:", error);
             res.status(500).send("Error al obtener productos");
         }
     }
@@ -86,7 +86,7 @@ class productController {
         const { pid } = req.params;
         const productToDelete = await this.productService.getProductById({_id: pid})
         if(!productToDelete) {
-            console.error(`Producto con ID: ${pid} no encontrado`);
+            logger.error(`Producto con ID: ${pid} no encontrado`);
             return res.status(404).send(`Producto con ID: ${pid} no encontrado`)
         }
 

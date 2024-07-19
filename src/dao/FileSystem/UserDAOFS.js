@@ -1,5 +1,7 @@
 import fs from 'fs';
+import { devLogger, prodLogger } from '../../utils/loggers.js';
 
+const logger = process.env.LOGGER === 'production' ? prodLogger : devLogger
 const path = "./src/JSON/Usuarios.json";
 
 export default class UserManager {
@@ -15,7 +17,7 @@ export default class UserManager {
             const data = fs.readFileSync(this.path, "utf-8"); // Lee el archivo de usuarios
             this.users = JSON.parse(data); // Parsea los datos del archivo de usuarios
         } catch (error) {
-            console.error("Error al cargar usuarios:", error);
+            logger.error("Error al cargar usuarios:", error);
         }
     }
 
@@ -24,7 +26,7 @@ export default class UserManager {
         try {
             fs.writeFileSync(this.path, JSON.stringify(this.users, null, 4), "utf-8");
         } catch (error) {
-            console.error("Error al guardar usuarios:", error);
+            logger.error("Error al guardar usuarios:", error);
         }
     }
 
@@ -35,10 +37,10 @@ export default class UserManager {
             const newUser = { id: newUserId, ...userData }; // Crea un nuevo usuario con el ID generado
             this.users.push(newUser); // Agrega el nuevo usuario al arreglo de usuarios
             this.saveFile(); // Guarda los cambios en el archivo de usuarios
-            console.log("Usuario agregado correctamente:", newUser);
+            logger.info("Usuario agregado correctamente:", newUser);
             return newUser;
         } catch (error) {
-            console.error("Error al agregar usuario:", error);
+            logger.error("Error al agregar usuario:", error);
             throw error;
         }
     }
@@ -78,7 +80,7 @@ export default class UserManager {
                 nextLink: nextLink
             };
         } catch (error) {
-            console.error("Error al obtener usuarios:", error);
+            logger.error("Error al obtener usuarios:", error);
             return [];
         }
     }
@@ -88,12 +90,12 @@ export default class UserManager {
         try {
             const user = this.users.find(user => user.id === id);
             if (!user) {
-                console.error("Usuario no encontrado");
+                logger.error("Usuario no encontrado");
                 return null;
             }
             return user;
         } catch (error) {
-            console.error("Error al obtener usuario por ID:", error);
+            logger.error("Error al obtener usuario por ID:", error);
         }
     }
 
@@ -104,12 +106,12 @@ export default class UserManager {
                 return Object.keys(filter).every(key => user[key] === filter[key]);
             });
             if (!user) {
-                console.error("Usuario no encontrado");
+                logger.error("Usuario no encontrado");
                 return null;
             }
             return user;
         } catch (error) {
-            console.error("Error al obtener usuario por filtro:", error);
+            logger.error("Error al obtener usuario por filtro:", error);
             throw error;
         }
     }
@@ -119,16 +121,16 @@ export default class UserManager {
         try {
             const userIndex = this.users.findIndex(user => user.id === id);
             if (userIndex === -1) {
-                console.error("Usuario no encontrado");
+                logger.error("Usuario no encontrado");
                 return null;
             }
             const updatedUser = { ...this.users[userIndex], ...updateData };
             this.users[userIndex] = updatedUser;
             this.saveFile();
-            console.log("Usuario actualizado correctamente:", updatedUser);
+            logger.info("Usuario actualizado correctamente:", updatedUser);
             return updatedUser;
         } catch (error) {
-            console.error("Error al actualizar usuario:", error);
+            logger.error("Error al actualizar usuario:", error);
         }
     }
 
@@ -137,15 +139,15 @@ export default class UserManager {
         try {
             const userIndex = this.users.findIndex(user => user.id === id);
             if (userIndex === -1) {
-                console.error("Usuario no encontrado");
+                logger.error("Usuario no encontrado");
                 return false;
             }
             const deletedUser = this.users.splice(userIndex, 1);
             this.saveFile();
-            console.log("Usuario eliminado correctamente:", deletedUser[0]);
+            logger.info("Usuario eliminado correctamente:", deletedUser[0]);
             return deletedUser[0];
         } catch (error) {
-            console.error("Error al eliminar usuario:", error);
+            logger.error("Error al eliminar usuario:", error);
         }
     }
 }

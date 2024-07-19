@@ -1,4 +1,7 @@
 import { usersModel } from "../models/usersModel.js";
+import { devLogger, prodLogger } from "../../utils/loggers.js";
+
+const logger = process.env.LOGGER === 'production' ? prodLogger : devLogger
 
 export default class userManager {
     // Método para agregar un nuevo usuario 
@@ -6,10 +9,10 @@ export default class userManager {
         try {
             // Guarda el nuevo usuario en la base de datos
             const newUser = await usersModel.create(userData);
-            console.log("Usuario agregado correctamente:", newUser);
+            logger.info("Usuario agregado correctamente:", newUser);
             return newUser;
         } catch (error) {
-            console.error("Error al agregar usuario:", error);
+            logger.error("Error al agregar usuario:", error);
             throw error;
         }
     }
@@ -53,7 +56,7 @@ export default class userManager {
             };
 
         } catch (error) {
-            console.error("Error al obtener usuarios:", error);
+            logger.error("Error al obtener usuarios:", error);
             return [];
         }
     }    
@@ -64,11 +67,11 @@ export default class userManager {
             // Busca un usuario por su ID en la base de datos
             const user = await usersModel.findById(id).lean();
             if (!user) {
-                console.error("Usuario no encontrado");
+                logger.error("Usuario no encontrado");
             }
             return user;
         } catch (error) {
-            console.error("Error al obtener usuario por ID:", error);
+            logger.error("Error al obtener usuario por ID:", error);
         }
     }
 
@@ -78,12 +81,12 @@ export default class userManager {
             // Busca un usuario en la base de datos de acuerdo al filtro
             const user = await usersModel.findOne(filter).lean();
             if (!user) {
-                console.error("Usuario no encontrado");
+                logger.error("Usuario no encontrado");
                 return null;
             }
             return user;
         } catch (error) {
-            console.error("Error al obtener usuario por filtro:", error);
+            logger.error("Error al obtener usuario por filtro:", error);
             throw error;
         }
     }
@@ -94,12 +97,12 @@ export default class userManager {
             // Busca y actualiza el usuario por su ID en la base de datos
             const updatedUser = await usersModel.findByIdAndUpdate(id, updateData, { new: true });
             if (!updatedUser) {
-                console.error("Usuario no encontrado");
+                logger.error("Usuario no encontrado");
             }
-            console.log("Usuario actualizado correctamente:", updatedUser);
+            logger.info("Usuario actualizado correctamente:", updatedUser);
             return updatedUser;
         } catch (error) {
-            console.error("Error al actualizar usuario:", error);
+            logger.error("Error al actualizar usuario:", error);
         }
     }
 
@@ -109,13 +112,13 @@ export default class userManager {
             // Elimina un usuario por su ID de la base de datos
             const deletedUser = await usersModel.findByIdAndDelete(id);
             if (!deletedUser) {
-                console.error("Usuario no encontrado");
+                logger.error("Usuario no encontrado");
                 return false
             }
-            console.log("Usuario eliminado correctamente:", deletedUser);
+            logger.info("Usuario eliminado correctamente:", deletedUser);
             return deletedUser;
         } catch (error) {
-            console.error("Error al eliminar usuario:", error);
+            logger.error("Error al eliminar usuario:", error);
         }
     }
 }

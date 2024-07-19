@@ -1,6 +1,8 @@
 import { cartsModel } from "../models/cartsModel.js";
 import productManager from "../Mongo/ProductDAOMongo.js";
+import { devLogger, prodLogger } from "../../utils/loggers.js";
 
+const logger = process.env.LOGGER === 'production' ? prodLogger : devLogger
 const ProductManager = new productManager
 
 
@@ -10,10 +12,10 @@ export default class cartManager {
     async create() {
         try {
             const newCart = await cartsModel.create({ products: [] }); // Crea un nuevo carrito
-            console.log("Carrito agregado correctamente:", newCart);
+            logger.info("Carrito agregado correctamente:", newCart);
             return newCart;
         } catch (error) {
-            console.error("Error al agregar carrito:", error);
+            logger.error("Error al agregar carrito:", error);
         }
     }
 
@@ -22,7 +24,7 @@ export default class cartManager {
         try {
             const cart = await cartsModel.findById(cartId); // Buscamos el carrito por su ID
             if (!cart) { // validación en caso de que el carrito no exista
-                console.error(`Carrito ${cartId} no encontrado`);
+                logger.error(`Carrito ${cartId} no encontrado`);
                 return false;
             }
     
@@ -35,17 +37,17 @@ export default class cartManager {
 
             if (existingProduct) { // Si el producto ya está en el carrito, aumentamos su cantidad
                 await cartsModel.updateOne(filter, update, options); // actualizamos el documento en la base de datos
-                console.log('Producto existente aumentado en 1 unidad');
+                logger.info('Producto existente aumentado en 1 unidad');
             } else {
                 // Si el producto no está en el carrito, lo agregamos con cantidad 1
                 cart.products.push({ product: productId, quantity: 1 });
-                console.log(`Producto ${productId} agregado al carrito ${cartId}`);
+                logger.info(`Producto ${productId} agregado al carrito ${cartId}`);
             }
 
             await cart.save(); // guardamos los cambios nuevamente en la base de datos
             return true;
         } catch (error) {
-            console.error(`Error al agregar producto al carrito ${cartId}:`, error);
+            logger.error(`Error al agregar producto al carrito ${cartId}:`, error);
             return false;
         }
     }
@@ -56,7 +58,7 @@ export default class cartManager {
             const updatedCart = await cartsModel.findByIdAndUpdate(cartId, { products: newProducts }, { new: true });
             return updatedCart;
         } catch (error) {
-            console.error("Error al actualizar el carrito:", error);
+            logger.error("Error al actualizar el carrito:", error);
             throw new Error("Ocurrió un error al actualizar el carrito");
         }
     }
@@ -72,7 +74,7 @@ export default class cartManager {
             // Mapeamos los productos en el carrito y devolvemos un objeto con el ID del producto y su cantidad
             return cart.products.map(item => ({ id: item.product._id, quantity: item.quantity }));
         } catch (error) {
-            console.error(`Error al obtener productos del carrito ${cartId}:`, error);
+            logger.error(`Error al obtener productos del carrito ${cartId}:`, error);
             return []; // En caso de error, devolvemos un arreglo vacío
         }
     }
@@ -83,7 +85,7 @@ export default class cartManager {
         if (cartById) {
             return cartById;
         } else {
-            console.error("Carrito no encontrado");
+            logger.error("Carrito no encontrado");
             return false;
         }
     }
@@ -109,7 +111,7 @@ export default class cartManager {
     
             return cart;
         } catch (error) {
-            console.error("Error al actualizar la cantidad del producto en el carrito:", error);
+            logger.error("Error al actualizar la cantidad del producto en el carrito:", error);
             throw error;
         }
     }
@@ -122,14 +124,14 @@ export default class cartManager {
             const result = await cartsModel.updateOne({ _id: cartId }, { $pull: { products: { product: productId } } });
     
             if (result.modifiedCount > 0) { // valida que al menos un documento fue modificado
-                console.log("Producto eliminado con éxito.");
+                logger.info("Producto eliminado con éxito.");
                 return true;
             } else {
-                console.log("El producto no se encontró en el carrito");
+                logger.info("El producto no se encontró en el carrito");
                 return false;
             }
         } catch (error) {
-            console.error("Error al eliminar producto del carrito:", error);
+            logger.error("Error al eliminar producto del carrito:", error);
         }
     }
 
@@ -141,10 +143,10 @@ export default class cartManager {
                 cart.products = [];
                 await cart.save();
             } else {
-                console.error("No se encontró el carrito.");
+                logger.error("No se encontró el carrito.");
             }
         } catch (error) {
-            console.error("Error al eliminar todos los productos del carrito:", error);
+            logger.error("Error al eliminar todos los productos del carrito:", error);
             throw error;            
         }
     }
