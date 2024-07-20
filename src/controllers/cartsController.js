@@ -17,7 +17,7 @@ class cartController {
             const newCart = await this.cartService.addCart();
             res.status(200).send({ status: 'success', cart: newCart });
         } catch (error) {
-            logger.error('Error adding cart:', error);
+            req.logger.error('Error adding cart:', error);
             res.status(500).send({ status: 'error', message: 'Could not add cart' });
         }
     }
@@ -51,7 +51,7 @@ class cartController {
             }
             
             if (cart.products.length === 0) { // verifica si el carrito contiene productos
-                logger.error(`El carrito con ID ${cartId} no tiene productos`);
+                req.logger.error(`El carrito con ID ${cartId} no tiene productos`);
                 res.status(404).send({ status: 'error', message: 'El carrito no tiene productos' });
                 return;
             }
@@ -116,7 +116,7 @@ class cartController {
                 });
             }
         } catch (error) {
-            logger.error("Error al actualizar el carrito:", error);
+            req.logger.error("Error al actualizar el carrito:", error);
             return res.status(500).json({
                 status: "error",
                 message: "Ocurrió un error al procesar la solicitud"
@@ -138,7 +138,7 @@ class cartController {
                 message: "Cantidad del producto actualizada exitosamente en el carrito"
             });
         } catch (error) {
-            logger.error("Error al actualizar la cantidad del producto en el carrito:", error);
+            req.logger.error("Error al actualizar la cantidad del producto en el carrito:", error);
             return res.status(500).json({
                 status: "error",
                 message: "Ocurrió un error al procesar la solicitud"
@@ -154,7 +154,7 @@ class cartController {
         
             res.status(200).send({status: "sucess", payload: result, message: "Productos borrados del carrito"});
         } catch (error) {
-            logger.error("Error al eliminar los productos del carrito");
+            req.logger.error("Error al eliminar los productos del carrito");
             res.status(500).send({status: "Error", message: "Error al eliminar los productos"})
         }
     }
@@ -230,7 +230,7 @@ class cartController {
 
             res.send({ status: 'success', ticket });
         } catch (error) {
-            logger.error(error);
+            req.logger.error(error);
             res.status(500).send({ status: 'error', message: 'Error al finalizar la compra' });
         }
     }

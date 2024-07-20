@@ -94,7 +94,7 @@ router.get('/products', optionalAuth, async (req, res) => {
             cartId: cartId
         });
     } catch (error) {
-        logger.error(error);
+        req.logger.error(error);
         res.status(500).send({ status: "error", message: "Error al cargar los productos" });
     }
 });
@@ -126,7 +126,7 @@ router.get('/products/:pid', optionalAuth, async (req, res) => {
         }
         )
     } catch (error) {
-        logger.error(error);
+        req.logger.error(error);
         res.status(500).send({ status: "error", message: "Error al cargar el producto" });
     }
 })
@@ -176,7 +176,7 @@ router.get('/profile', passport.authenticate('jwt', { session: false, failureRed
                 title: "E-Commerce Tomi - Perfil"
             });
         } catch (error) {
-            logger.error("Error al obtener perfil del usuario", error);
+            req.logger.error("Error al obtener perfil del usuario", error);
         }
     } else {
         res.redirect('login')

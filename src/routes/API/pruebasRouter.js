@@ -23,7 +23,7 @@ router.get('/mail', (req, res) => {
         })
         res.send('Email enviado con exito')
     } catch (error) {
-        logger.error(error);
+        req.logger.error(error);
     }
 })
 
@@ -32,7 +32,7 @@ router.get('/sms', (req, res) => {
         sendSMS()
         res.send('Email enviado con exito')
     } catch (error) {
-        logger.error(error);
+        req.logger.error(error);
     }
 })
 
@@ -45,7 +45,7 @@ router.get('/mockingproducts', (req, res) => {
         }
         res.status(200).send({status: 'Success',  payload: products})
     } catch (error) {
-        logger.error("Error al crear productos:", error);
+        req.logger.error("Error al crear productos:", error);
     }
 })
 
