@@ -154,7 +154,7 @@ class cartController {
         
             res.status(200).send({status: "sucess", payload: result, message: "Productos borrados del carrito"});
         } catch (error) {
-            req.logger.error("Error al eliminar los productos del carrito");
+            req.logger.error("Error al eliminar los productos del carrito", error);
             res.status(500).send({status: "Error", message: "Error al eliminar los productos"})
         }
     }

@@ -90,7 +90,7 @@ export default class UserManager {
         try {
             const user = this.users.find(user => user.id === id);
             if (!user) {
-                logger.error("Usuario no encontrado");
+                logger.error("Usuario no encontrado", user);
                 return null;
             }
             return user;
@@ -106,7 +106,7 @@ export default class UserManager {
                 return Object.keys(filter).every(key => user[key] === filter[key]);
             });
             if (!user) {
-                logger.error("Usuario no encontrado");
+                logger.error("Usuario no encontrado", user);
                 return null;
             }
             return user;
@@ -121,7 +121,7 @@ export default class UserManager {
         try {
             const userIndex = this.users.findIndex(user => user.id === id);
             if (userIndex === -1) {
-                logger.error("Usuario no encontrado");
+                logger.error("Usuario no encontrado", userIndex);
                 return null;
             }
             const updatedUser = { ...this.users[userIndex], ...updateData };
@@ -139,7 +139,7 @@ export default class UserManager {
         try {
             const userIndex = this.users.findIndex(user => user.id === id);
             if (userIndex === -1) {
-                logger.error("Usuario no encontrado");
+                logger.error("Usuario no encontrado", userIndex);
                 return false;
             }
             const deletedUser = this.users.splice(userIndex, 1);

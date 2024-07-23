@@ -86,7 +86,7 @@ export default class productManager {
             // Busca un producto por su ID en la base de datos
             const product = await productsModel.findById(id).lean();
             if (!product) {
-                logger.error("Producto no encontrado");
+                logger.error("Producto no encontrado", product);
             }
             return product;
         } catch (error) {
@@ -100,7 +100,7 @@ export default class productManager {
             // Busca y actualiza el producto por su ID en la base de datos
             const updatedProduct = await productsModel.findByIdAndUpdate(id, updateData, { new: true });
             if (!updatedProduct) {
-                logger.error("Producto no encontrado");
+                logger.error("Producto no encontrado", updatedProduct);
             }
             logger.info("Producto actualizado correctamente:", updatedProduct);
             return updatedProduct;
@@ -115,7 +115,7 @@ export default class productManager {
             // Elimina un producto por su ID de la base de datos
             const deletedProduct = await productsModel.findByIdAndDelete(id);
             if (!deletedProduct) {
-                logger.error("Producto no encontrado");
+                logger.error("Producto no encontrado", deletedProduct);
             }
             logger.info("Producto eliminado correctamente:", deletedProduct);
         } catch (error) {

@@ -44,7 +44,7 @@ export default class ProductManager {
         const codeExists = this.Products.some(element => element.code === code); // Verifica si el "code" pasado ya existe
 
         if (codeExists) {
-            logger.error("El código ya existe.");
+            logger.error("El código ya existe.", codeExists);
             return;
         }
         
@@ -78,7 +78,7 @@ export default class ProductManager {
     getById(id) {
         const product = this.Products.find(product => product.id === id); // Método find para obtener producto cuya propiedad ID coincida con el ID pasado por parámetro
         if (!product) {
-            logger.error("Producto no encontrado");
+            logger.error("Producto no encontrado", product);
         } else {
             return product;
         }
@@ -89,7 +89,7 @@ export default class ProductManager {
         const productToUpdate = this.Products.find(product => product.id === id); // Busca por ID el producto a actualizar
 
         if (!productToUpdate) {
-            logger.error("Producto no encontrado.")
+            logger.error("Producto no encontrado.", productToUpdate)
         }
 
         // Bucle for...in que reemplaza los campos a actualizar con los datos nuevos
@@ -99,7 +99,7 @@ export default class ProductManager {
                 if (productToUpdate.hasOwnProperty(property)) { // Verifica si "ProductToUpdate" tiene la propiedad que se esta intentando actualizar
                     productToUpdate[property] = updateData[property] // Reemplaza los valores viejos con los nuevos
                 } else {
-                    logger.error(`El producto no tiene el campo ${propiedad}.`);
+                    logger.error(`El producto no tiene el campo ${propiedad}.`, productToUpdate);
                 }
             }
         }
@@ -113,7 +113,7 @@ export default class ProductManager {
     delete(id) {
         const index = this.Products.findIndex(product => product.id === id); // Busca el producto a eliminar
         if (index === -1) {
-            logger.error("Producto no encontrado");
+            logger.error("Producto no encontrado", index);
             return;
         }
         this.Products.splice(index, 1); // Eliminar el producto del arreglo

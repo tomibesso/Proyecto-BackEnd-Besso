@@ -24,7 +24,7 @@ export default class cartManager {
         try {
             const cart = await cartsModel.findById(cartId); // Buscamos el carrito por su ID
             if (!cart) { // validación en caso de que el carrito no exista
-                logger.error(`Carrito ${cartId} no encontrado`);
+                logger.error(`Carrito ${cartId} no encontrado`, cart);
                 return false;
             }
     
@@ -85,7 +85,7 @@ export default class cartManager {
         if (cartById) {
             return cartById;
         } else {
-            logger.error("Carrito no encontrado");
+            logger.error("Carrito no encontrado", cartById);
             return false;
         }
     }

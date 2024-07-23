@@ -67,7 +67,7 @@ export default class userManager {
             // Busca un usuario por su ID en la base de datos
             const user = await usersModel.findById(id).lean();
             if (!user) {
-                logger.error("Usuario no encontrado");
+                logger.error("Usuario no encontrado", user);
             }
             return user;
         } catch (error) {
@@ -81,7 +81,7 @@ export default class userManager {
             // Busca un usuario en la base de datos de acuerdo al filtro
             const user = await usersModel.findOne(filter).lean();
             if (!user) {
-                logger.error("Usuario no encontrado");
+                logger.error("Usuario no encontrado", user);
                 return null;
             }
             return user;
@@ -97,7 +97,7 @@ export default class userManager {
             // Busca y actualiza el usuario por su ID en la base de datos
             const updatedUser = await usersModel.findByIdAndUpdate(id, updateData, { new: true });
             if (!updatedUser) {
-                logger.error("Usuario no encontrado");
+                logger.error("Usuario no encontrado", updatedUser);
             }
             logger.info("Usuario actualizado correctamente:", updatedUser);
             return updatedUser;
@@ -112,7 +112,7 @@ export default class userManager {
             // Elimina un usuario por su ID de la base de datos
             const deletedUser = await usersModel.findByIdAndDelete(id);
             if (!deletedUser) {
-                logger.error("Usuario no encontrado");
+                logger.error("Usuario no encontrado", deletedUser);
                 return false
             }
             logger.info("Usuario eliminado correctamente:", deletedUser);

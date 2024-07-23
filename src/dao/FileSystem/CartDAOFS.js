@@ -47,7 +47,7 @@ export default class CartManager {
         const cart = this.getById(cartId); // Obtiene el ID del carrito
         const productExists = this.ProductManager.getProductById(productId); // Verifica si el producto existe
         if (!productExists) { // Validación en caso de que el producto no exista
-            logger.error(`Producto con id ${productId} no encontrado`);
+            logger.error(`Producto con id ${productId} no encontrado`, productExists);
             return false;
         }
         if (cart) { // Validación en caso de que el producto sí exista
@@ -61,7 +61,7 @@ export default class CartManager {
             logger.info(`Producto ${productId} agregado al carrito ${cartId}`);
             return true;
         } else {
-            logger.error(`Carrito ${cartId} no encontrado`);
+            logger.error(`Carrito ${cartId} no encontrado`, cart);
             return false;
         }
     }
@@ -101,11 +101,11 @@ export default class CartManager {
                 logger.info(`Cantidad del producto ${productId} actualizada a ${newQuantity} en el carrito ${cartId}`);
                 return true;
             } else {
-                logger.error(`Producto ${productId} no encontrado en el carrito ${cartId}`);
+                logger.error(`Producto ${productId} no encontrado en el carrito ${cartId}`, productIndex);
                 return false;
             }
         } else {
-            logger.error(`Carrito ${cartId} no encontrado`);
+            logger.error(`Carrito ${cartId} no encontrado`, cart);
             return false;
         }
     }
@@ -125,7 +125,7 @@ export default class CartManager {
                 return false;
             }
         } else {
-            logger.error(`Carrito ${cartId} no encontrado`);
+            logger.error(`Carrito ${cartId} no encontrado`, cart);
             return false;
         }
     }
@@ -139,7 +139,7 @@ export default class CartManager {
             logger.info(`Todos los productos eliminados del carrito ${cartId}`);
             return true;
         } else {
-            logger.error(`Carrito ${cartId} no encontrado`);
+            logger.error(`Carrito ${cartId} no encontrado`, cart);
             return false;
         }
     }
