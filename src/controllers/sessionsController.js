@@ -31,7 +31,7 @@ class sessionController {
                 email,
                 role: userFound.role
             })
-            req.logger.info("Inicio de sesión exitoso", "Token:" + token);
+            req.logger.info(`Inicio de sesión exitoso. Token: ${token}`);
             res.cookie("TomiCookieToken", token, {
                 maxAge: 60*60*1000*24,
                 httpOnly: true

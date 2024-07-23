@@ -1,6 +1,8 @@
 import { productsModel } from "../models/productsModel.js";
 import { devLogger, prodLogger } from "../../utils/loggers.js";
 
+const logger = process.env.LOGGER === 'production' ? prodLogger : devLogger
+
 export default class productManager {
     // Método para agregar un nuevo producto 
     async create(title, description, price, thumbnails, code, stock, category) {
