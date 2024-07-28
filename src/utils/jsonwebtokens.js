@@ -16,3 +16,12 @@ export const authTokenMiddleware = (req, res, next) => {
             next();
     })
 }
+
+export const verifyToken = (token, privateKey) => {
+    try {
+        return jwt.verify(token, privateKey);
+    } catch (error) {
+        console.error("Error verificando el token:", error);
+        return null;
+    }
+};

@@ -161,6 +161,14 @@ router.get('/login', (req, res) => {
     })
 })
 
+router.get('/restorePassword', (req, res) => {
+    res.render('restorePassword')
+})
+
+router.get('/resetPassword', (req, res) => {
+    res.render('resetPassword')
+})
+
 router.get('/profile', passport.authenticate('jwt', { session: false, failureRedirect: '/login' }), async (req, res) => {
     if (req.user) {        
         try {

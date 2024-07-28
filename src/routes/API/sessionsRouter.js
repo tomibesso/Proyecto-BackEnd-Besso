@@ -3,13 +3,17 @@ import passport from 'passport';
 import sessionController from '../../controllers/sessionsController.js';
 
 const router = Router()
-const { login, register, logout, githubCallback, current } = new sessionController()
+const { login, register, logout, restorePassword, resetPassword, githubCallback, current } = new sessionController()
 
 router.post('/login', login)
 
 router.post('/register', register)
 
 router.post('/logout', logout);
+
+router.post('/restorePassword', restorePassword)
+
+router.post('/resetPassword', resetPassword)
 
 router.get('/github', passport.authenticate('github', {scope: 'user: email'}), async (req, res) => {})
 

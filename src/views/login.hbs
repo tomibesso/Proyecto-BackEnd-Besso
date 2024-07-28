@@ -5,14 +5,25 @@
         <input type="text" name="email" id="email" required>
         <label>Contraseña</label>
         <input type="password" name="password" id="password" required>
+        <div>
         <button type="submit">Ingresar</button>
+        <a href="/api/sessions/github">Iniciar con Github</a>
+        </div>
+
         <a href="/register">Registrarse</a>
+        <a href="/restorePassword">Restablecer contraseña</a>
     </form>
 
-    <div>
-        <a href="/api/sessions/github">Github</a>
-    </div>
 </main>
+
+<style>
+    form {
+        display: flex;
+        flex-direction: column;
+        max-width: 350px;
+        margin: auto;
+    }
+</style>
 
 <script>
     async function login(event) {
