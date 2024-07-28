@@ -100,7 +100,7 @@ class productController {
 
     deleteProduct = async (req, res) => {
         const { pid } = req.params;
-        const userId = req.user.user._id;
+        const userId = req.user.user.id;
         const userRole = req.user.user.role;
 
         const product = await this.productService.getProductById(pid);
@@ -109,7 +109,7 @@ class productController {
             return res.status(404).send(`Producto con ID: ${pid} no encontrado`);
         }
 
-        if (userRole !== 'admin' && product.owner.toString() !== userId.toString()) {
+        if (userRole !== 'admin' && product.owner.toString() !== userId) {
             return res.status(403).send({ status: "Error", error: "No tenes permisos para eliminar este producto" });
         }
 

@@ -14,7 +14,19 @@ async function addToCart(cartId, productId) {
                 gravity: "top",
                 position: "left",
                 style: {
-                  background: "linear-gradient(to right, #1ECE1B, #69D96C)",
+                    background: "linear-gradient(to right, #1ECE1B, #69D96C)",
+                  border: "2px solid black",
+                  borderRadius: "5px"
+                },
+              }).showToast();
+        } else if (data.message === 'Los usuarios premium no pueden agregar sus propios productos al carrito') {
+            Toastify({
+                text: "Los usuarios premium no pueden agregar sus propios productos al carrito.",
+                duration: 2000,
+                gravity: "top",
+                position: "left",
+                style: {
+                  background: "linear-gradient(to right, #FF0101, #FF6B6B)",
                   border: "2px solid black",
                   borderRadius: "5px"
                 },

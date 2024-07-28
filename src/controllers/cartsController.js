@@ -10,6 +10,7 @@ import { isValidObjectId } from "mongoose";
 class cartController {
     constructor() {
         this.cartService = CartService
+        this.productService = ProductService
     }
 
     addCart = async (req, res) => {
@@ -65,10 +66,9 @@ class cartController {
     addProductToCart = async (req, res, next) => {
         const cartId = req.params.cid; // Pasa a numero el params pasado
         const productId = req.params.pid; // Pasa a numero el params pasado
-        const addProduct = await this.cartService.addProductToCart(cartId, productId); // Utiliza el metodo de CartManager para agregar el producto al carrito
-
+        
         try {
-            if(isValidObjectId(cartId) || isValidObjectId(productId)) { 
+            if(!isValidObjectId(cartId) || !isValidObjectId(productId)) { 
                 CustomError.createError({
                     name: 'Error al añadir el producto al carrito',
                     cause: generateAddProductError({cartId, productId}),
@@ -76,11 +76,14 @@ class cartController {
                     code: EError.INVALID_PARAM
                 })
             }
-
-            if (req.user.user.role === 'premium' && product.owner.toString() === req.user.user._id.toString()) {
+            
+            const product = await this.productService.getProductById(productId);
+            
+            if (req.user.user.role === 'premium' && product.owner.toString() === req.user.user.id) {
                 return res.status(403).send({ status: 'error', message: 'Los usuarios premium no pueden agregar sus propios productos al carrito' });
             }
 
+            const addProduct = await this.cartService.addProductToCart(cartId, productId); // Utiliza el metodo de CartManager para agregar el producto al carrito
             if (addProduct) {
                 res.status(200).send({ status: 'success', message: 'Producto agregado al carrito' });
             }
