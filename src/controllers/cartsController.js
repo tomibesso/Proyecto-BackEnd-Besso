@@ -77,6 +77,10 @@ class cartController {
                 })
             }
 
+            if (req.user.user.role === 'premium' && product.owner.toString() === req.user.user._id.toString()) {
+                return res.status(403).send({ status: 'error', message: 'Los usuarios premium no pueden agregar sus propios productos al carrito' });
+            }
+
             if (addProduct) {
                 res.status(200).send({ status: 'success', message: 'Producto agregado al carrito' });
             }

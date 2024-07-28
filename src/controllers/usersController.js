@@ -85,6 +85,29 @@ class userController {
             res.status(500).send({ status: "Error", error: error.message });
         }
     }
+
+    changeUserRole = async (req, res) => {
+        const { uid } = req.params;
+
+        if (!uid || uid.length !== 24) {
+            return res.status(400).send({ status: "Error", error: "ID de usuario no válido" });
+        }
+
+        try {
+            const user = await this.userService.getUserById(uid);
+            if (!user) {
+                return res.status(404).send({ status: "Error", error: "Usuario no encontrado" });
+            }
+
+            const newRole = user.role === 'user' ? 'premium' : 'user';
+            user.role = newRole;
+            const updatedUser = await this.userService.updateUser(uid, { role: newRole });
+
+            res.send({ status: "Success", payload: updatedUser });
+        } catch (error) {
+            res.status(500).send({ status: "Error", error: error.message });
+        }
+    };
 }
 
 export default userController;

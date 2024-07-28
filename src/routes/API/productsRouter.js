@@ -13,12 +13,12 @@ router.get("/", getProducts);
 router.get("/:pid", getProductsById);
 
 // Método(petición) POST para agregar un nuevo producto
-router.post('/', optionalAuth, authorization('admin'), addProduct);
+router.post('/', optionalAuth, authorization('premium', 'admin'), addProduct);
 
 // Método(petición) PUT para actualizar un producto existente
-router.put('/:pid', optionalAuth, authorization('admin'), updateProduct);
+router.put('/:pid', optionalAuth, authorization('premium', 'admin'), updateProduct);
 
 // Método(petición) DELETE para eliminar un producto
-router.delete('/:pid', optionalAuth, authorization('admin'), deleteProduct);
+router.delete('/:pid', optionalAuth, authorization('premium', 'admin'), deleteProduct);
 
 export default router;

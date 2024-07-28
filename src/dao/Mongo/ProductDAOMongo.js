@@ -5,7 +5,7 @@ const logger = process.env.LOGGER === 'production' ? prodLogger : devLogger
 
 export default class productManager {
     // Método para agregar un nuevo producto 
-    async create(title, description, price, thumbnails, code, stock, category) {
+    async create({title, description, price, thumbnails, code, stock, category, owner}) {
         try {
             // Guarda el nuevo producto en la base de datos
             const newProduct = await productsModel.create({
@@ -15,7 +15,8 @@ export default class productManager {
                 thumbnails,
                 code,
                 stock,
-                category
+                category,
+                owner
             });
             logger.info("Producto agregado correctamente:", newProduct);
             return newProduct

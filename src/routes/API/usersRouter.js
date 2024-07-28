@@ -2,7 +2,7 @@ import { Router } from "express";
 import userController from "../../controllers/usersController.js";
 
 const router = Router();
-const { getUsers, getUserById, addUser, updateUser, deleteUser } = new userController();
+const { getUsers, getUserById, addUser, updateUser, deleteUser, changeUserRole } = new userController();
 
 // Método(petición) para obtener todos los usuarios
 router.get("/", getUsers);
@@ -18,5 +18,8 @@ router.put("/:uid", updateUser);
 
 // Método(petición) DELETE para eliminar un usuario
 router.delete("/:uid", deleteUser);
+
+// Método(petición) PUT para cambiar el rol de un usuario
+router.put("/premium/:uid", changeUserRole);
 
 export default router;

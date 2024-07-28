@@ -3,12 +3,11 @@ import { productsModel } from "../dao/models/productsModel.js";
 import { CustomError } from "../service/errors/customError.js";
 import { generateGetProductError, generateProductError } from "../service/errors/info.js";
 import { EError } from "../service/errors/enums.js";
-import { isValidObjectId } from "mongoose";
 
 class productController {
     constructor (){
         this.productService = ProductService;
-        this.productsModel = productsModel
+        this.productsModel = productsModel;
     }
 
     getProducts = async (req, res) => {
@@ -21,14 +20,11 @@ class productController {
             res.status(500).send("Error al obtener productos");
         }
     }
-    
 
     getProductsById = async (req, res, next) => {
-        const pid = req.params.pid; // Obtiene el ID del producto por params
-        
+        const pid = req.params.pid;
         try {
-            const product = await this.productService.getProductById(pid); // Busca el producto por su ID
-            
+            const product = await this.productService.getProductById(pid);
             if (pid.length !== 24) {
                 CustomError.createError({
                     name: 'Error al encontrar el producto',
@@ -40,20 +36,20 @@ class productController {
             }
 
             if (!product) {
-                res.status(401).send({status: 'error', error: 'No se encontró el producto'})
+                res.status(401).send({status: 'error', error: 'No se encontró el producto'});
                 return;
             }
 
             res.send(product);
         } catch (error) {
-            next(error)
+            next(error);
         }
     }
 
-    addProduct = async (req, res, next) => {
-        const { title, description, price, thumbnails, code, stock, category } = req.body; // Obtiene los datos del nuevo producto desde el body de la petición(req)
-
+    addProduct = async (req, res, next) => {      
         try {
+            const { title, description, price, thumbnails, code, stock, category } = req.body;
+
             if(!title || !description || !price || !thumbnails || !code || !stock || !category) {
                 CustomError.createError({
                     name: 'Error al añadir el producto',
@@ -63,34 +59,61 @@ class productController {
                 })
             }
 
-            const newProduct = await this.productService.addProduct(title, description, price, thumbnails, code, stock, category); // Agrega el nuevo producto con el método de ProductManager
-            res.status(200).send({ status: 'success', payload: newProduct});
+            const ownerId = req.user.user.id || "admin";
+
+            const newProductData = {
+                title,
+                description,
+                price,
+                thumbnails,
+                code,
+                stock,
+                category,
+                owner: ownerId
+            };
+
+            const newProduct = await this.productService.addProduct(newProductData);
+            res.status(200).send({ status: 'success', payload: newProduct });
         } catch (error) {
-            next(error)
+            next(error);
         }
     }
 
     updateProduct = async (req, res) => {
-        const {pid} = req.params; // Obtiene el ID del producto por params
-        const { title, description, price, thumbnails, code, stock, category } = req.body; // Obtiene los datos de actualización del cuerpo de la solicitud
-        const products = await this.productsModel.find().lean(); // Busca todos los productos en la base de datos
-        const idExists = products.find(product => product._id.toString() === pid); // Verifica si el ID proporcionado existe en la base de datos
-    
-        if (!idExists) return res.send({ status: "Error", error: `No se encontró un producto con el ID: ${pid}` });
-    
-        const updatedProduct = await this.productService.updateProduct({_id: pid}, {title, description, price, thumbnails, code, stock, category})
+        const { pid } = req.params;
+        const { title, description, price, thumbnails, code, stock, category } = req.body;
+        const userId = req.user.user._id;
+        const userRole = req.user.user.role;
+
+        const product = await this.productService.getProductById(pid);
+        if (!product) {
+            return res.status(404).send({ status: "Error", error: `No se encontró un producto con el ID: ${pid}` });
+        }
+
+        if (userRole !== 'admin' && product.owner.toString() !== userId.toString()) {
+            return res.status(403).send({ status: "Error", error: "No tenes permisos para actualizar este producto" });
+        }
+
+        const updatedProduct = await this.productService.updateProduct(pid, { title, description, price, thumbnails, code, stock, category });
         res.status(200).send(`Producto con ID ${pid} actualizado correctamente`);
     }
 
     deleteProduct = async (req, res) => {
         const { pid } = req.params;
-        const productToDelete = await this.productService.getProductById({_id: pid})
-        if(!productToDelete) {
+        const userId = req.user.user._id;
+        const userRole = req.user.user.role;
+
+        const product = await this.productService.getProductById(pid);
+        if (!product) {
             req.logger.error(`Producto con ID: ${pid} no encontrado`);
-            return res.status(404).send(`Producto con ID: ${pid} no encontrado`)
+            return res.status(404).send(`Producto con ID: ${pid} no encontrado`);
         }
 
-        await this.productService.deleteProduct({_id: pid})
+        if (userRole !== 'admin' && product.owner.toString() !== userId.toString()) {
+            return res.status(403).send({ status: "Error", error: "No tenes permisos para eliminar este producto" });
+        }
+
+        await this.productService.deleteProduct(pid);
         res.status(200).send(`Producto con ID: ${pid} eliminado`);
     }
 }
