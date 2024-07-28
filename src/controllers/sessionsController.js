@@ -122,7 +122,7 @@ class sessionController {
             const { newPassword } = req.body;
 
             if (!token) {
-                return res.status(400).send({ status: "error", error: "Token no encontrado" });
+                return res.status(401).send({ status: "error", error: "Token no encontrado" });
             }
 
             if (!newPassword) {
