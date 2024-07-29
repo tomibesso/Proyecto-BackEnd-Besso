@@ -182,8 +182,8 @@ async function createProduct(event) {
 
 }
 
-async function deleteProduct() {
-    const pid = document.getElementById('productId').value
+async function deleteProduct(event) {
+    const pid = document.getElementById('product_Id').value;
 
     try {
         const response = await fetch(`/api/products/${pid}`, {
@@ -192,9 +192,6 @@ async function deleteProduct() {
                 'Content-Type': 'application/json'
             }
         })
-        
-        const data = await response.json()
-        console.log('Respuesta del servidor al eliminar producto:', data)
 
         if (response.ok) {
             alert("Producto eliminado")
