@@ -168,8 +168,7 @@ async function createProduct(event) {
             body: JSON.stringify(newUser)
         });
 
-        const data = await response.json()
-        console.log('Respuesta del servidor al crear producto:', data)
+        console.log('Respuesta del servidor al crear producto:', response)
 
         if (response.ok) {
             alert("Producto creado")
@@ -179,7 +178,49 @@ async function createProduct(event) {
     } catch (error) {
         console.error("Error al crear el producto", error);
     }
+}
 
+async function updateProduct(event) {
+    event.preventDefault();
+
+    const productId = document.getElementById('productId').value;
+
+    const title = document.getElementById('updateTitle').value;
+    const description = document.getElementById('updateDescription').value;
+    const price = document.getElementById('updatePrice').value;
+    const thumbnails = document.getElementById('updateThumbnails').value;
+    const code = document.getElementById('updateCode').value;
+    const stock = document.getElementById('updateStock').value;
+    const category = document.getElementById('updateCategory').value;
+
+    const updatedProduct = {};
+    if (title) updatedProduct.title = title;
+    if (description) updatedProduct.description = description;
+    if (price) updatedProduct.price = price;
+    if (thumbnails) updatedProduct.thumbnails = thumbnails;
+    if (code) updatedProduct.code = code;
+    if (stock) updatedProduct.stock = stock;
+    if (category) updatedProduct.category = category;
+
+    try {   
+        const response = await fetch(`/api/products/${productId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updatedProduct)
+        });
+
+        console.log('Respuesta del servidor al crear producto:', response)
+
+        if (response.ok) {
+            alert("Producto actualizado")
+        } else {
+            alert("No se pudo actualizar el producto")
+        }
+    } catch (error) {
+        console.error("Error al actualizar el producto", error);
+    }
 }
 
 async function deleteProduct(event) {
