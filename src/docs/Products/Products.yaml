@@ -1,0 +1,202 @@
+paths:
+  /api/products:
+    get:
+      summary: Obtiene todos los productos.
+      tags:
+        - Products
+      responses:
+        "200":
+          description: Los productos fueron obtenidos correctamente desde la base de datos.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        "500":
+          description: Error interno del servidor, generalmente por una falla en la base de datos o un query erroneo.
+    post:
+      summary: Crea un nuevo producto
+      tags:
+        - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/createProduct'
+      responses:
+        "201":
+          description: El producto fue creado con éxito.
+        "500":
+          description: Error interno del servidor, generalmente por una falla en la base de datos o un query erroneo. 
+
+  /api/products/{pid}:
+    get:
+      summary: Obtiene un producto por ID
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: Id del producto que se desea solicitar.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Producto encontrado con éxito.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        "401":
+          description: No se encontró el producto en la base de datos.
+        "500":
+          description: Error interno del servidor, generalmente por una falla en la base de datos o un query erroneo.        
+    put:
+      summary: Actualiza un producto ya existente
+      tags:
+        - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/updateProduct'
+      responses:
+        "200":
+          description: El producto fue actualizado con éxito.
+        "403":
+          description: El usuario no tiene permisos para actualizar el producto.
+        "404":
+          description: No se encontró el producto a actualizar.
+        "500":
+          description: Error interno del servidor, generalmente por una falla en la base de datos o un query erroneo.
+    delete:
+      summary: Elimina un usuario
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: Id del producto que se desea eliminar.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: El producto fue eliminado con éxito.
+        "403":
+          description: El usuario no tiene permisos para eliminar el producto.
+        "404":
+          description: No se encontró el producto a eliminar.
+        "500":
+          description: Error interno del servidor, generalmente por una falla en la base de datos o un query erroneo.
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Id autogenerado por Mongo
+        title:
+          type: string
+          description: Título del producto
+        description:
+          type: string
+          description: Descripción del producto
+        price:
+          type: number
+          description: Precio del producto
+        thumbnails:
+          type: string
+          description: URL de la imagen del producto
+        code:
+          type: string
+          description: Código del producto
+        stock:
+          type: number
+          description: Stock del producto
+        category:
+          type: string
+          description: Categoría del producto
+        owner:
+          type: string
+          description: ID del dueño del producto
+      example:
+        _id: '66a6821e85a4efa753c47c0c'
+        title: Producto de prueba
+        description: Este es un producto de prueba
+        price: 200
+        code: "abc123"
+        stock: 25
+        category: Electrónica
+        owner: '66899c6ae9b9a0c8147a8d57'
+
+  requestBodies:
+    createProduct:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Título del producto
+        description:
+          type: string
+          description: Descripción del producto
+        price:
+          type: number
+          description: Precio del producto
+        thumbnails:
+          type: string
+          description: URL de la imagen del producto
+        code:
+          type: string
+          description: Código del producto, este debe ser único
+        stock:
+          type: number
+          description: Stock del producto
+        category:
+          type: string
+          description: Categoría del producto          
+      example:
+        title: "Producto de prueba"
+        description: Este es un producto de prueba
+        price: 200
+        thumbnails: URL-de-imagen
+        stock: 25
+        category: Electrónica
+
+    updateProduct:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Título del producto
+        description:
+          type: string
+          description: Descripción del producto
+        price:
+          type: number
+          description: Precio del producto
+        thumbnails:
+          type: string
+          description: URL de la imagen del producto
+        code:
+          type: string
+          description: Código del producto, este debe ser único
+        stock:
+          type: number
+          description: Stock del producto
+        category:
+          type: string
+          description: Categoría del producto          
+      example:
+        title: "Producto de prueba"
+        description: Este es un producto de prueba
+        price: 200
+        thumbnails: URL-de-imagen
+        stock: 25
+        category: Electrónica

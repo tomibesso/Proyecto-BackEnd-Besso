@@ -14,7 +14,7 @@ class productController {
         let { limit, numPage, sort, category, stock } = req.query;
         try {
             let result = await this.productService.getProducts(limit, numPage, sort, category, stock);
-            res.send(result);
+            res.status(200).send(result);
         } catch (error) {
             req.logger.error("Error al obtener productos:", error);
             res.status(500).send("Error al obtener productos");
@@ -40,8 +40,9 @@ class productController {
                 return;
             }
 
-            res.send(product);
+            res.status(200).send(product);
         } catch (error) {
+            res.status(500).send("Error al obtener productos");
             next(error);
         }
     }
@@ -73,49 +74,62 @@ class productController {
             };
 
             const newProduct = await this.productService.addProduct(newProductData);
-            res.status(200).send({ status: 'success', payload: newProduct });
+            res.status(201).send({ status: 'success', payload: newProduct });
         } catch (error) {
             next(error);
+            res.status(500).send("Error en el servidor");            
         }
     }
 
     updateProduct = async (req, res) => {
-        const { pid } = req.params;
-        const { title, description, price, thumbnails, code, stock, category } = req.body;
-        const userId = req.user.user._id;
-        const userRole = req.user.user.role;
-
-        const product = await this.productService.getProductById(pid);
-        if (!product) {
-            return res.status(404).send({ status: "Error", error: `No se encontró un producto con el ID: ${pid}` });
+        try {
+            const { pid } = req.params;
+            const { title, description, price, thumbnails, code, stock, category } = req.body;
+            const userId = req.user.user._id;
+            const userRole = req.user.user.role;
+    
+            const product = await this.productService.getProductById(pid);
+            if (!product) {
+                return res.status(404).json({ status: "Error", error: `No se encontró un producto con el ID: ${pid}` });
+            }
+    
+            if (userRole !== 'admin' && product.owner.toString() !== userId.toString()) {
+                return res.status(403).json({ status: "Error", error: "No tienes permisos para actualizar este producto" });
+            }
+    
+            const updatedProduct = await this.productService.updateProduct(pid, { title, description, price, thumbnails, code, stock, category });
+            res.status(200).json({ status: "Success", message: `Producto con ID ${pid} actualizado correctamente`, updatedProduct });
+        } catch (error) {
+            req.logger.error(error);
+            res.status(500).json({ status: "Error", error: "Error interno del servidor" });
         }
-
-        if (userRole !== 'admin' && product.owner.toString() !== userId.toString()) {
-            return res.status(403).send({ status: "Error", error: "No tenes permisos para actualizar este producto" });
-        }
-
-        const updatedProduct = await this.productService.updateProduct(pid, { title, description, price, thumbnails, code, stock, category });
-        res.status(200).send(`Producto con ID ${pid} actualizado correctamente`);
     }
+    
 
     deleteProduct = async (req, res) => {
-        const { pid } = req.params;
-        const userId = req.user.user.id;
-        const userRole = req.user.user.role;
-
-        const product = await this.productService.getProductById(pid);
-        if (!product) {
-            req.logger.error(`Producto con ID: ${pid} no encontrado`);
-            return res.status(404).send(`Producto con ID: ${pid} no encontrado`);
+        try {
+            const { pid } = req.params;
+            const userId = req.user.user.id;
+            const userRole = req.user.user.role;
+    
+            const product = await this.productService.getProductById(pid);
+            if (!product) {
+                req.logger.error(`Producto con ID: ${pid} no encontrado`);
+                return res.status(404).json({ status: "Error", error: `Producto con ID: ${pid} no encontrado` });
+            }
+    
+            if (userRole !== 'admin' && product.owner.toString() !== userId) {
+                return res.status(403).json({ status: "Error", error: "No tienes permisos para eliminar este producto" });
+            }
+    
+            await this.productService.deleteProduct(pid);
+            res.status(200).json({ status: "Success", message: `Producto con ID: ${pid} eliminado correctamente` });
+        } catch (error) {
+            req.logger.error(`Error eliminando el producto con ID: ${pid}`, error);
+            res.status(500).json({ status: "Error", error: "Error interno del servidor" });
         }
-
-        if (userRole !== 'admin' && product.owner.toString() !== userId) {
-            return res.status(403).send({ status: "Error", error: "No tenes permisos para eliminar este producto" });
-        }
-
-        await this.productService.deleteProduct(pid);
-        res.status(200).send(`Producto con ID: ${pid} eliminado`);
     }
+    
 }
 
 export default productController;

@@ -50,7 +50,7 @@ class userController {
             }
             // Crea un nuevo usuario con los datos proporcionados usando el método del manager
             const result = await this.userService.addUser(firstName, lastName, email, password, age);
-            res.send({ status: "Success", payload: result });
+            res.status(201).send({ status: "Success", payload: result });
         } catch (error) {
            next(error)
         }

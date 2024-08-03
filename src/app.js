@@ -5,6 +5,8 @@ import passport from "passport";
 import { Server } from "socket.io"
 import handlebars from "express-handlebars";
 import cors from "cors";
+import swaggerJsdoc from "swagger-jsdoc";
+import swaggerUiExpress from "swagger-ui-express";
 
 import routerApp from "./routes/index.js"
 import { initializePassport } from "./config/passportConfig.js";
@@ -21,6 +23,7 @@ import { devLogger, prodLogger } from "./utils/loggers.js";
 const logger = process.env.LOGGER === 'production' ? prodLogger : devLogger
 const app = express();
 const { port, mongoURL, cookieParserSign, sessionKey } = objectConfig;
+
  
 // Creación del servidor HTTP y conexión del servidor de sockets (Socket.IO)
 export const getServer = () => app.listen(port, error => {
@@ -54,6 +57,19 @@ app.use(session({
     saveUninitialized: true
 }))
 
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.1',
+        info: {
+            title: 'Documentación del Proyecto BackEnd',
+            description: 'API para documentar el proyecto de BackEnd'
+        }
+    },
+    apis: [`${__dirname}/docs/**/*.yaml`]
+}
+
+const specs = swaggerJsdoc(swaggerOptions)
+
 initializePassport()
 app.use(passport.initialize())
 app.use(passport.session())
@@ -69,6 +85,7 @@ app.engine('hbs', handlebars.engine({
 app.set("views", __dirname+"/views")
 app.set("view engine", "hbs")
 
+app.use('/apidocs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
 app.use(routerApp)
 app.use(handleErrors)
 
