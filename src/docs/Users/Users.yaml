@@ -26,7 +26,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#components/requestBodies/createUser'
+              $ref: '#/components/requestBodies/CreateUser'
       responses:
         "201":
           description: El usuario fue creado con exito.
@@ -42,7 +42,7 @@ paths:
           required: true
           description: Id del usuario que se desea solicitar.
           schema:
-            $type: String
+            type: String
       responses:
         "200":
           description: Usuario encontrado con exito.
@@ -50,6 +50,78 @@ paths:
             application/json:
               schema:
                 $ref: '#components/schemas/User'
+        "400":
+          description: El ID proporcionado no es válido
+        "404":
+          description: Usuario no encontrado en la base de datos.
+        "500":
+          description: Error interno del servidor, generalmente por una falla en la base de datos o un query erroneo.
+    put:
+      summary: Actualiza los datos de un usuario.
+      tags:
+        - Users
+      parameters:
+        - name: uid
+          in: path
+          required: true
+          description: Id del usuario a actualizar.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/requestBodies/UpdateUser'
+      responses:
+        "200":
+          description: Usuario actualizado exitosamente.
+        "400":
+          description: Se deben completar todos los campos.
+        "404":
+          description: Usuario no encontrado en la base de datos.
+        "500":
+          description: Error interno del servidor, generalmente por una falla en la base de datos o un query erroneo.
+    delete:
+      summary: Elimina un usuario.
+      tags:
+        - Users
+      parameters:
+        - name: uid
+          in: path
+          required: true
+          description: Id del usuario a actualizar.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Usuario eliminado exitosamente
+        "404":
+          description: Usuario no encontrado
+        "500":
+          description: Error interno del servidor, generalmente por una falla en la base de datos o un query erroneo.
+
+  /api/users/premium/{uid}:
+    put:
+      summary: Cambia el rol de un usuario de "user" a "premium" y viceversa.
+      tags:
+        - Users
+      parameters:
+        - name: uid
+          in: path
+          required: true
+          description: Id del usuario a actualizar.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Rol cambiado exitosamente.
+        "400":
+          description: ID de usuario no válido
+        "404":
+          description: Usuario no encontrado.
+        "500":
+          description: Error interno del servidor, generalmente por una falla en la base de datos o un query erroneo. 
 
 components:
   schemas:
@@ -87,7 +159,28 @@ components:
         cartId:  ObjectId('66899c6ae9b9a0c8147a8d57')
 
   requestBodies:
-    createUser:
+    CreateUser:
+      type: object
+      properties:
+        firstName:
+          type: String
+          description: Nombre del usuario
+        lastName:
+          type: String
+          description: Apellido del usuario
+        email:
+          type: String
+          description: Correo Electrónico del usuario, este debe ser unico
+        password:
+          type: String
+          description: Contraseña (hasheada) del usuario
+      example:
+        firstName: Tomas
+        lastName: Besso
+        email: tomi.besso12@gmail.com
+        password: 123456
+
+    UpdateUser:
       type: object
       properties:
         firstName:

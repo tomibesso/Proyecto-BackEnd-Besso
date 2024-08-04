@@ -15,6 +15,7 @@ class userController {
             const users = await this.userService.getUsers(limit, numPage, sortProperty, sort); // Usa el método del manager para obtener los usuarios
             res.send(users);
         } catch (error) {
+            req.logger.error(error);
             res.status(500).send({ status: "Error", error: error.message });
         }
     }
@@ -28,17 +29,17 @@ class userController {
         try {
             const user = await this.userService.getUserById(uid); // Usa el método del manager para obtener el usuario por ID
             if (!user) return res.status(404).send({ status: "Error", error: "Usuario no encontrado" });
-            res.send({ status: "Success", payload: user });
+            res.status(200).send({ status: "Success", payload: user });
         } catch (error) {
+            req.logger.error(error);
             res.status(500).send({ status: "Error", error: error.message });
         }
     }
 
     // Agregar nuevo usuario
     addUser = async (req, res, next) => {
-        const { firstName, lastName, email, password, age } = req.body; // Obtiene los datos del nuevo usuario desde el body de la petición(req)
+        const { firstName, lastName, email, password, age } = req.body;
     
-        // if (!email) return res.status(400).send({ status: "Error", error: "Completa los campos obligatorios." });
         try {
             if (!firstName || !lastName || !email || !age) {
                 CustomError.createError({
@@ -48,11 +49,12 @@ class userController {
                     code: EError.INVALID_TYPE_ERROR
                 })
             }
-            // Crea un nuevo usuario con los datos proporcionados usando el método del manager
+
             const result = await this.userService.addUser(firstName, lastName, email, password, age);
             res.status(201).send({ status: "Success", payload: result });
         } catch (error) {
-           next(error)
+            req.logger.error(error);
+            next(error)
         }
     }
 
@@ -67,8 +69,9 @@ class userController {
             // Usa el método del manager para actualizar el usuario
             const result = await this.userService.updateUser(uid, { firstName, lastName, email, password });
             if (!result) return res.status(404).send({ status: "Error", error: `No se encontró un usuario con el ID: ${uid}` });
-            res.send({ status: "Success", payload: result });
+            res.status(200).send({ status: "Success", payload: result });
         } catch (error) {
+            req.logger.error(error);
             res.status(500).send({ status: "Error", error: error.message });
         }
     }
@@ -80,8 +83,9 @@ class userController {
             // Usa el método del manager para eliminar el usuario
             const result = await this.userService.deleteUser(uid);
             if (!result) return res.status(404).send({ status: "Error", error: "Usuario no encontrado" });
-            res.send({ status: "Success", payload: result });
+            res.status(200).send({ status: "Success", payload: result });
         } catch (error) {
+            req.logger.error(error);
             res.status(500).send({ status: "Error", error: error.message });
         }
     }
@@ -103,8 +107,9 @@ class userController {
             user.role = newRole;
             const updatedUser = await this.userService.updateUser(uid, { role: newRole });
 
-            res.send({ status: "Success", payload: updatedUser });
+            res.status(200).send({ status: "Success", payload: updatedUser });
         } catch (error) {
+            req.logger.error(error);
             res.status(500).send({ status: "Error", error: error.message });
         }
     };
