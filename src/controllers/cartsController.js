@@ -16,14 +16,13 @@ class cartController {
     addCart = async (req, res) => {
         try {
             const newCart = await this.cartService.addCart();
-            res.status(200).send({ status: 'success', cart: newCart });
+            res.status(201).send({ status: 'success', cart: newCart });
         } catch (error) {
-            req.logger.error('Error adding cart:', error);
-            res.status(500).send({ status: 'error', message: 'Could not add cart' });
+            req.logger.error('Error al agregar carrito:', error);
+            res.status(500).send({ status: 'error', message: 'No se pudo agregar el carrito' });
         }
     }
     
-
     getCartById = async (req, res, next) => {
         const cartId = req.params.cid; // Obtiene el ID del carrito de los parámetros de la solicitud
         
@@ -63,49 +62,9 @@ class cartController {
         }
     }
 
-    addProductToCart = async (req, res, next) => {
-        const cartId = req.params.cid; // Pasa a numero el params pasado
-        const productId = req.params.pid; // Pasa a numero el params pasado
-        
-        try {
-            if(!isValidObjectId(cartId) || !isValidObjectId(productId)) { 
-                CustomError.createError({
-                    name: 'Error al añadir el producto al carrito',
-                    cause: generateAddProductError({cartId, productId}),
-                    message: 'Error al añadir el producto al carrito',
-                    code: EError.INVALID_PARAM
-                })
-            }
-            
-            const product = await this.productService.getProductById(productId);
-            
-            if (req.user.user.role === 'premium' && product.owner.toString() === req.user.user.id) {
-                return res.status(403).send({ status: 'error', message: 'Los usuarios premium no pueden agregar sus propios productos al carrito' });
-            }
-
-            const addProduct = await this.cartService.addProductToCart(cartId, productId); // Utiliza el metodo de CartManager para agregar el producto al carrito
-            if (addProduct) {
-                res.status(200).send({ status: 'success', message: 'Producto agregado al carrito' });
-            }
-        } catch (error) {
-            next(error)
-        }
-    }
-
-    deleteProductsFromCart = async (req, res) => {
-        const cartId = req.params.cid; // Pasa a numero el params pasado
-        const productId = req.params.pid; // Pasa a numero el params pasado
-        const deleteProduct = await this.cartService.deleteProductsFromCart(cartId, productId);
-        if(deleteProduct) {
-            res.status(200).send({ status: 'success', message: 'Producto eliminado del carrito exitosamente'})
-        } else {
-            res.status(400).send({ status: 'error', message: 'El producto no pudo ser eliminado'});
-        }
-    }
-
     updateCart = async (req, res) => {
         const cartId = req.params.cid;
-        const newProducts = req.body.products; // Suponiendo que los productos se envían en el cuerpo de la solicitud bajo la clave "products"
+        const newProducts = req.body.products;
     
         try {
             const updatedCart = await this.cartService.updateCart(cartId, newProducts);
@@ -131,6 +90,36 @@ class cartController {
         }
     }
 
+    addProductToCart = async (req, res, next) => {
+        const cartId = req.params.cid; // Pasa a numero el params pasado
+        const productId = req.params.pid; // Pasa a numero el params pasado
+        
+        try {
+            if(!isValidObjectId(cartId) || !isValidObjectId(productId)) { 
+                CustomError.createError({
+                    name: 'Error al añadir el producto al carrito',
+                    cause: generateAddProductError({cartId, productId}),
+                    message: 'Error al añadir el producto al carrito',
+                    code: EError.INVALID_PARAM
+                })
+            }
+            
+            const product = await this.productService.getProductById(productId);
+            
+            if (req.user.user.role === 'premium' && product.owner.toString() === req.user.user.id) {
+                return res.status(403).send({ status: 'error', message: 'Los usuarios premium no pueden agregar sus propios productos al carrito' });
+            }
+
+            const addProduct = await this.cartService.addProductToCart(cartId, productId); // Utiliza el metodo de CartManager para agregar el producto al carrito
+            if (addProduct) {
+                res.status(200).send({ status: 'success', message: 'Producto agregado al carrito' });
+            }
+        } catch (error) {
+            res.status(500).send({ status: 'error', message: 'No se pudo agregar el producto al carrito' });
+            next(error)
+        }
+    }
+
     updateProductQuantity = async (req, res) => {
         const cartId = req.params.cid;
         const productId = req.params.pid;
@@ -152,6 +141,23 @@ class cartController {
             });
         }
     }
+
+    deleteProductsFromCart = async (req, res) => {
+        try {
+          const cartId = req.params.cid;
+          const productId = req.params.pid;
+          const deleteProduct = await this.cartService.deleteProductsFromCart(cartId, productId);
+                
+          if (deleteProduct) {
+            res.status(200).send({ status: 'success', message: 'Producto eliminado del carrito exitosamente' });
+          } else {
+            res.status(400).send({ status: 'error', message: 'El producto no pudo ser eliminado' });
+          }
+        } catch (error) {
+          req.logger.error(error); // Puedes usar tu logger aquí si tienes uno
+          res.status(500).send({ status: 'error', message: 'Error interno del servidor' });
+        }
+      };      
 
     deleteAllProducts = async (req, res) => {
         const cartId = req.params.cid
@@ -176,7 +182,7 @@ class cartController {
             }
 
             if (cart.products.length === 0) {
-                return res.status(200).json({ status: 'info', message: 'Agrega productos al carrito para poder realizar una compra' });
+                return res.status(204).json({ status: 'info', message: 'Agrega productos al carrito para poder realizar una compra' });
             }
 
             let totalAmount = 0;
@@ -201,12 +207,14 @@ class cartController {
                 purchaser: req.user.user.email,
                 products: purchasedProducts
             });
+            
 
             if (ticket) {
                 const productList = ticket.products.map(product => `<li>${product.productTitle} - ${product.quantity} x $${product.productPrice}</li>`).join('');
                 const failedProductsList = failedProducts.map(item => `<li>${item.product.title} (ID: ${item.product._id}) - x${item.quantity}</li>`).join('');
             
                 sendTicket({
+                    to: ticket.purchaser,
                     subject: "Ticket de su compra",
                     html: `<div>
                         <h1>Ticket de compra</h1>
@@ -235,7 +243,7 @@ class cartController {
             cart.products = failedProducts;
             await CartService.updateCart(cid, cart.products);
 
-            res.send({ status: 'success', ticket });
+            res.status(200).send({ status: 'success', ticket });
         } catch (error) {
             req.logger.error(error);
             res.status(500).send({ status: 'error', message: 'Error al finalizar la compra' });

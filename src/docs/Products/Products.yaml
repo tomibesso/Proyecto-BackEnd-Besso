@@ -24,7 +24,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/requestBodies/createProduct'
+              $ref: '#/components/requestBodies/CreateProduct'
       responses:
         "201":
           description: El producto fue creado con éxito.
@@ -58,12 +58,19 @@ paths:
       summary: Actualiza un producto ya existente
       tags:
         - Products
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: Id del producto que se desea solicitar.
+          schema:
+            type: string      
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/requestBodies/updateProduct'
+              $ref: '#/components/requestBodies/UpdateProduct'
       responses:
         "200":
           description: El producto fue actualizado con éxito.
@@ -137,7 +144,7 @@ components:
         owner: '66899c6ae9b9a0c8147a8d57'
 
   requestBodies:
-    createProduct:
+    CreateProduct:
       type: object
       properties:
         title:
@@ -169,7 +176,7 @@ components:
         stock: 25
         category: Electrónica
 
-    updateProduct:
+    UpdateProduct:
       type: object
       properties:
         title:

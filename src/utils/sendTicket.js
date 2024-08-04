@@ -12,10 +12,10 @@ const transport = nodemailer.createTransport({
     }
 })
 
-export const sendTicket = async ({subject, html}) => {
+export const sendTicket = async ({to, subject, html}) => {
     return await transport.sendMail({
         from: 'Tomas Besso <Proyecto BackEnd>',
-        to: 'tomi.besso12@gmail.com',
+        to,
         subject,
         html
     })
