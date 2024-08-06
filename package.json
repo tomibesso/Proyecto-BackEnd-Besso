@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha test/chaiTests.js",
     "start": "node --watch src/app.js -m production",
     "dev": "node --watch src/app.js -m development"
   },
@@ -43,5 +43,9 @@
     "toastify-js": "^1.12.0",
     "twilio": "^5.2.1",
     "winston": "^3.13.1"
+  },
+  "devDependencies": {
+    "chai": "^5.1.1",
+    "mocha": "^10.7.0"
   }
 }

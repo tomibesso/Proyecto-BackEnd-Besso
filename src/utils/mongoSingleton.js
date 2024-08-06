@@ -1,5 +1,5 @@
 import {connect} from "mongoose";
-import { devLogger, prodLogger } from "./loggers.js";
+import { prodLogger, devLogger } from "./loggers.js";
 
 const logger = process.env.LOGGER === 'production' ? prodLogger : devLogger
 
