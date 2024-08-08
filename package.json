@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "mocha test/chaiTests.js",
+    "test": "mocha test/supertestTest.js",
     "start": "node --watch src/app.js -m production",
     "dev": "node --watch src/app.js -m development"
   },
@@ -46,6 +46,7 @@
   },
   "devDependencies": {
     "chai": "^5.1.1",
-    "mocha": "^10.7.0"
+    "mocha": "^10.7.0",
+    "supertest": "^7.0.0"
   }
 }
