@@ -1,79 +1,167 @@
-import chai from 'chai'
+import { expect } from 'chai'
+import mongoose from 'mongoose'
 import supertest from 'supertest'
+import { objectConfig } from '../src/config/index.js'
+import { request } from 'express'
+
+const mongoURL = objectConfig.mongoURL
+mongoose.connect(mongoURL)
+
 
 // Debemos tener (en otra terminal) nuestro servidor levantado para poder ejecutar los endpoints
 
-const expect = chai.expect
 const requester = supertest('http://localhost:8080')
 
 describe('Test del Proyecto BackEnd', () => {
+    // Tests de Products (hacer de: get, getBy, addProduct, updateProduct y deleteProduct)
     describe('Test de Producto', () => {
-        it('Endpoint POST /api/products debe crear un producto correctamente', async () => {
-            const productMock = {
-                title: 'Producto Test',
-                description: 'Descripcion Test',
-                price: 200,
-                thumbnails: 'Thumbnails Test',
-                code: 'Codigo Test',
-                stock: 25,
-                category: 'Categoria Test',
-                owner: 'Owner Test'
+        let cookie;
+        const userMock = {
+            firstName: 'Tomas',
+            lastName: 'Besso',
+            age: '24',
+            email: 'tomi.besso12@gmail.com',
+            password: '123456'
+        }
+
+        const productMock = {
+            title: 'Producto Test',
+            description: 'Descripcion Test',
+            price: 200,
+            thumbnails: 'Thumbnails Test',
+            code: 'Codigo Test',
+            stock: 25,
+            category: 'Categoria Test'
+        }
+
+        before(async () => {
+            await mongoose.connection.collection('products').deleteMany({})
+            await mongoose.connection.collection('users').deleteMany({})
+
+            const registerResult = await requester.post('/api/sessions/register').send(userMock)
+            const registeredUserId = registerResult._body.user._id
+
+            await requester.put(`/api/users/premium/${registeredUserId}`)
+
+            const userMockLogin = {
+                email: userMock.email,
+                password: userMock.password
             }
+            
+            const loginResult = await requester.post('/api/sessions/login').send(userMockLogin)
+            const cookieResult = loginResult.headers['set-cookie'][0];
 
-            const { statusCode, ok, _body } = await requester.post('/api/products').send(productMock)
+            cookie = {
+                name: cookieResult.split('=')[0],
+                value: cookieResult.split('=')[1].split(';')[0]
+            }            
+        })
 
-            // console.log(statusCode);
-            // console.log(ok);
-            // console.log(_body);
+        it('Endpoint POST /api/products debe crear un producto correctamente', async () => {
+            const { statusCode, ok, _body } = await requester.post('/api/products')
+                .set('cookie', `${cookie.name}=${cookie.value}`)
+                .send(productMock)
+
+            expect(_body.payload).to.be.an('object')
+            expect(statusCode).to.be.equal(201)
+            expect(ok).to.be.equal(true)
             expect(_body.payload).to.have.property('_id')
         })
 
         it('Endpoint GET /api/products debe traer todos los productos correctamente', async () => {
             const {statusCode, ok, _body } = await requester.get('/api/products')
+                       
+            expect(ok).to.be.equal(true)
+            expect(statusCode).to.be.equal(200)
+            expect(_body.payload).to.be.an('array')
+        })
+
+        it('Endpoint GET /api/products/pid debe traer un producto correctamente', async () => {
+            const products = await requester.get('/api/products')
+            const pid = products._body.payload[0]._id
+
+            const {statusCode, ok, _body } = await requester.get(`/api/products/${pid}`)
 
             expect(ok).to.be.equal(true)
             expect(statusCode).to.be.equal(200)
+            expect(_body).to.have.property('_id')
+            expect(_body).to.be.an('object')
         })
 
-        it('Endpoint GET /api/products debe traer un producto correctamente', async () => {
-            const pid = '6632ffe6ab79238ec43cb1c4'
+        it('Endpoint PUT /api/products/pid debe actualizar un producto correctamente', async () => {
+            const products = await requester.get('/api/products')
+            const pid = products._body.payload[0]._id
+            
 
-            const {statusCode, ok, _body } = await requester.get(`/api/products:${pid}`)
-
-            expect(ok).to.be.equal(true)
-            expect(statusCode).to.be.equal(200)
-            expect(_body.payload).to.have.property('_id')
-        })
-
-        
-    })
-
-    describe('Test avanzado de Session', () => {
-        let cookie
-        it('Debe registrar correctamente a un usuario', async () => {
-            const userMock = {
-                firstName: 'Tomas',
-                lastName: 'Besso',
-                age: '24',
-                email: 'tomi.besso12@gmail.com',
-                password: '123456'
+            const updatedProduct = {
+                title: 'Producto Actualizado',
+                description: 'Descripcion Actualizada',
+                price: 300,
+                thumbnails: 'Thumbnails Actualizado',
+                code: 'Codigo Actualizado',
+                stock: 50,
+                category: 'Categoria Actualizada'
             }
 
-            const { _body } = await requester.post('/api/sessions/register').send(userMock)
-            expect(_body.payload).to.be.ok
+            const { statusCode, ok, _body } = await requester.put(`/api/products/${pid}`)
+                .set('cookie', `${cookie.name}=${cookie.value}`)
+                .send(updatedProduct)
+
+            expect(statusCode).to.be.equal(200)
+            expect(ok).to.be.equal(true)
+            expect(_body.message).to.be.equal(`Producto con ID ${pid} actualizado correctamente`)
+            expect(_body.updatedProduct.title).to.be.equal(updatedProduct.title)
+            expect(_body.updatedProduct).to.be.an('object')
+
+        }) 
+
+        it('Endpoint DELETE /api/products/pid debe eliminar un producto correctamente', async () => {
+            const products = await requester.get('/api/products')
+            const pid = products._body.payload[0]._id
+
+            const { statusCode, ok, _body } = await requester.delete(`/api/products/${pid}`)
+                .set('cookie', `${cookie.name}=${cookie.value}`)
+
+            expect(statusCode).to.be.equal(200)
+            expect(ok).to.be.equal(true)
+            expect(_body.message).to.be.equal(`Producto con ID: ${pid} eliminado correctamente`)
+        })
+    })
+
+    describe('Test de Session', () => {
+        let cookie
+        const userMock = {
+            firstName: 'Tomas',
+            lastName: 'Besso',
+            age: '24',
+            email: 'tomi.besso12@gmail.com',
+            password: '123456',
+            role: "premium"
+        }
+
+        before(async function() {
+            await mongoose.connection.collection('users').deleteMany({})
+        });
+        
+        it('Debe registrar correctamente a un usuario', async () => {
+            const { _body, statusCode, ok } = await requester.post('/api/sessions/register').send(userMock)
+            
+            expect(_body).to.be.ok
+            expect(_body.user).to.be.an('object')
+            expect(statusCode).to.be.equal(200)
+            expect(ok).to.be.true
         })
 
         it('Debe loguear correctamente a un usuario y devolver una cookie', async () => {
-            const userMock = {
-                email: 'tomi.besso12@gmail.com',
-                password: '123456'
+            const userMockLogin = {
+                email: userMock.email,
+                password: userMock.password
             }
 
-            const result = await requester.post('/api/sessions/login').send(userMock)
+            const result = await requester.post('/api/sessions/login').send(userMockLogin)
+            
             const cookieResult = result.headers['set-cookie'][0]
-
-            expect(cookieResult).to.be.ok
-
+            
             cookie = {
                 name: cookieResult.split('=')[0],
                 value: cookieResult.split('=')[1]
@@ -84,39 +172,24 @@ describe('Test del Proyecto BackEnd', () => {
         })
 
         it('Debe enviar la cookie que contiene el usuario y destructurar este correctamente', async () => {
-            const { _body } = await requester.get('/api/sessions/current').set('cookie', [`${cookie.name}=${cookie.value}`])
+            const { _body, statusCode, ok } = await requester.get('/api/sessions/current').set('cookie', [`${cookie.name}=${cookie.value}`])
             
-            expect(_body.payload.email).to.be.equal(userMock.email)
+            expect(_body.user.email).to.be.equal(userMock.email)
+            expect(ok).to.be.true
+            expect(statusCode).to.be.equal(200)
         })
+
+        // it() // resetPassword
     })
 
-    describe('Test de Uploads', () => {
-        it('El servicio debe crear un producto con la ruta de imagen', async () => {
-            const productMock = {
-                title: 'Producto Test',
-                description: 'Descripcion Test',
-                price: 200,
-                thumbnails: 'Thumbnail Test',
-                code: 'Codigo Test',
-                stock: 25,
-                category: 'Categoria Test',
-                owner: 'Owner Test'
-            }
+    // tests de Carts (hacer de: addCart, getCartById, addProductToCart, purchaseProducts)
+    // describe('Test de Carts', () => {
+    //     it() // addCart
 
-            const result = await requester.post('/api/product/withImage')
-                                        .field('name', productMock.title)
-                                        .field('name', productMock.description)
-                                        .field('name', productMock.price)
-                                        .field('name', productMock.thumbnails)
-                                        .field('name', productMock.code)
-                                        .field('name', productMock.stock)
-                                        .field('name', productMock.category)
-                                        .field('name', productMock.owner)
-                                        .attach('image', './src/public/assets/monumental-wallpaper.jpg')
-
-            expect(result.statusCode).to.be.equal(200)
-            expect(result._body.payload).to.have.property('_id')
-            expect(result._body.payload.image).to.be.ok
-        })
-    })
+    //     it() // getCartById
+        
+    //     it() // addProductToCart
+        
+    //     it() // purchaseProducts
+    // })
 })

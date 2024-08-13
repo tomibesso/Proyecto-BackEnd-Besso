@@ -2,7 +2,7 @@ import userManager from '../src/dao/Mongo/UserDAOMongo.js'
 import Asserts from 'assert'
 import mongoose from 'mongoose'
 
-mongoose.connect('')  // Usar otra base de datos, la local por ejemplo
+mongoose.connect('mongodb://localhost:27017/')  // Usar otra base de datos, la local por ejemplo
 const assert = Asserts.strict
 
 describe('Test Users Dao', () => {

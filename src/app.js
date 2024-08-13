@@ -5,7 +5,6 @@ import passport from "passport";
 import { Server } from "socket.io"
 import handlebars from "express-handlebars";
 import cors from "cors";
-import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUiExpress from "swagger-ui-express";
 
 import routerApp from "./routes/index.js"
@@ -19,8 +18,9 @@ import MongoStore from 'connect-mongo';
 import { handleErrors } from "./middlewares/errors/index.js";
 import { addLogger } from "./utils/loggers.js";
 import { devLogger, prodLogger } from "./utils/loggers.js";
+import { specs } from "./utils/swaggerConfig.js";
 
-const logger = process.env.LOGGER === 'production' ? prodLogger : devLogger
+const logger = process.env.LOGGER === 'PROD_LOGGER' ? prodLogger : devLogger
 const app = express();
 const { port, mongoURL, cookieParserSign, sessionKey } = objectConfig;
 
@@ -56,19 +56,6 @@ app.use(session({
     resave: true,
     saveUninitialized: true
 }))
-
-const swaggerOptions = {
-    definition: {
-        openapi: '3.0.1',
-        info: {
-            title: 'Documentación del Proyecto BackEnd',
-            description: 'API para documentar el proyecto de BackEnd'
-        }
-    },
-    apis: [`${__dirname}/docs/**/*.yaml`]
-}
-
-const specs = swaggerJsdoc(swaggerOptions)
 
 initializePassport()
 app.use(passport.initialize())

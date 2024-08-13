@@ -3,8 +3,25 @@ import { program } from '../utils/commander.js';
 import { MongoSingleton } from '../utils/mongoSingleton.js';
 
 const { mode } = program.opts()
+
+let envPath;
+
+switch (mode) {
+    case 'production':
+        envPath = './.env.production';
+        break;
+    case 'development':
+        envPath = './.env.development';
+        break;
+    case 'testing':
+        envPath = './.env.tests';
+        break;
+    default:
+        envPath = './.env.development';
+        break;
+}
 dotenv.config({
-    path: mode === 'production' ? './.env.production' : './.env.development'
+    path: envPath
 });
 
 export const objectConfig = {
@@ -20,7 +37,7 @@ export const objectConfig = {
     gmailPass: process.env.GMAIL_PASS,
     gmailService: process.env.GMAIL_SERVICE,
     gmailPort: process.env.GMAIL_PORT,
-    twilioSid: process.env.TWILIO_ACCOUNT_sID,
+    twilioSid: process.env.TWILIO_ACCOUNT_SID,
     twilioAuthToken: process.env.TWILIO_AUTH_TOKEN,
     twilioPhone: process.env.TWILIO_PHONE,
     logger: process.env.LOGGER

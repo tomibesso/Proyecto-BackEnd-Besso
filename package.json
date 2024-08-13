@@ -4,7 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "mocha test/supertestTest.js",
+    "test": "mocha test/supertestTest.js -m testing",
+    "testServer": "node --watch src/app.js -m testing",
     "start": "node --watch src/app.js -m production",
     "dev": "node --watch src/app.js -m development"
   },

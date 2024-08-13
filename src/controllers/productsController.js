@@ -85,7 +85,7 @@ class productController {
         try {
             const { pid } = req.params;
             const { title, description, price, thumbnails, code, stock, category } = req.body;
-            const userId = req.user.user._id;
+            const userId = req.user.user.id;
             const userRole = req.user.user.role;
     
             const product = await this.productService.getProductById(pid);
@@ -104,6 +104,7 @@ class productController {
             res.status(500).json({ status: "Error", error: "Error interno del servidor" });
         }
     }
+    
     
 
     deleteProduct = async (req, res) => {

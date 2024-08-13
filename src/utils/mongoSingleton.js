@@ -1,15 +1,15 @@
 import {connect} from "mongoose";
 import { prodLogger, devLogger } from "./loggers.js";
 
-const logger = process.env.LOGGER === 'production' ? prodLogger : devLogger
 
 export class MongoSingleton {
     static #instance
     constructor(){
         connect(process.env.MONGO_URL)
     }
-
+    
     static getInstance(){
+        const logger = process.env.LOGGER === 'PROD_LOGGER' ? prodLogger : devLogger
         if(this.#instance){
             logger.info('Base de datos ya esta conectada')
             return this.#instance
