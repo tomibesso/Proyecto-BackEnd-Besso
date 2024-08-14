@@ -243,10 +243,10 @@ class cartController {
             cart.products = failedProducts;
             await CartService.updateCart(cid, cart.products);
 
-            res.status(200).send({ status: 'success', ticket });
+            return res.status(200).send({ status: 'success', ticket });
         } catch (error) {
             req.logger.error(error);
-            res.status(500).send({ status: 'error', message: 'Error al finalizar la compra' });
+            return res.status(500).send({ status: 'error', message: 'Error al finalizar la compra' });
         }
     }
 }

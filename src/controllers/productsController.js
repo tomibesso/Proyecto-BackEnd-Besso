@@ -60,6 +60,7 @@ class productController {
                 })
             }
 
+
             const ownerId = req.user.user.id || "admin";
 
             const newProductData = {
@@ -74,10 +75,10 @@ class productController {
             };
 
             const newProduct = await this.productService.addProduct(newProductData);
-            res.status(201).send({ status: 'success', payload: newProduct });
+            return res.status(201).send({ status: 'success', payload: newProduct });
         } catch (error) {
-            next(error);
             res.status(500).send("Error en el servidor");            
+            next(error);
         }
     }
 
