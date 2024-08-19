@@ -9,6 +9,12 @@
     <input type="text" name="code" id="code" placeholder="Código" required>
     <input type="number" name="stock" id="stock" placeholder="Stock" required>
     <input type="text" name="category" id="category" placeholder="Categoría" required>
+    <form id="uploadPrpductForm" enctype="multipart/form-data">
+        <label for="product">Seleccionar imagen del producto:</label>
+        <input type="hidden" name="type" value="product">
+        <input type="file" id="productImage" name="productImage" accept="image/*" required>
+        <button type="submit">Subir Imagen</button>
+    </form>
     <button onclick="createProduct(event)">Crear</button>
 </div>
 

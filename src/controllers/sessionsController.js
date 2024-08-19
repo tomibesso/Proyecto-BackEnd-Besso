@@ -28,6 +28,8 @@ class sessionController {
             const isValid = isValidPassword(password, userFound.password)
     
             if(!isValid) return res.status(401).send({status: "Error", error: "Contraseña incorrecta"})
+
+            await this.userService.updateUser(userFound._id, {last_connection: new Date()});
     
             const token = generateToken({
                 id: userFound._id,
@@ -80,8 +82,17 @@ class sessionController {
         }
     }
 
-    logout = (req, res) => {
-        res.clearCookie('TomiCookieToken').redirect('/login');
+    logout = async (req, res) => {
+        try {
+            const token = req.cookies.TomiCookieToken;
+            if (token) {
+                const decodedToken = verifyToken(token, objectConfig.privateKey);
+                await this.userService.updateUser(decodedToken.user.id, { last_connection: new Date() });
+            }
+            res.clearCookie('TomiCookieToken').redirect('/login');
+        } catch (error) {
+            req.logger.error(error);
+        }
     }
 
     restorePassword = async (req, res) => {

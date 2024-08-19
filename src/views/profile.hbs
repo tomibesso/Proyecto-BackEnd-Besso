@@ -1,10 +1,27 @@
 <main>
-    <h1>Datos del usuario</h1>
-    <p>Nombre: {{user.firstName}}</p>
-    <p>Apellido: {{user.lastName}}</p>
-    <p>Email: {{user.email}}</p>
-    <p>Edad: {{user.age}}</p>
-<button class="logoutBtn" id="logoutBtn">Cerrar Sesión</button>
+    <div style="display: flex;  flex-direction: column;">
+        <div>
+            <h3>Imagen de Perfil:</h3>
+            <img id="profileImagePreview" src="{{profileImageURL}}" alt="Imagen de perfil" style="width: 200px; height: auto;">
+        </div>
+        <div>
+            <h1>Datos del usuario</h1>
+            <p>Nombre: {{user.firstName}}</p>
+            <p>Apellido: {{user.lastName}}</p>
+            <p>Email: {{user.email}}</p>
+            <p>Edad: {{user.age}}</p>
+            <h2>Subir imagen de perfil</h2>
+
+            <input type="hidden" id="userId" value="{{user._id}}" />
+        </div>
+    </div>
+    <form id="uploadProfileForm" enctype="multipart/form-data">
+        <label for="profile">Cambiar imagen de perfil:</label>
+        <input type="hidden" name="type" value="profile">
+        <input type="file" id="profileImage" name="documents" accept="image/*" required>
+        <button type="submit">Subir Imagen</button>
+    </form>
+<button style="background-color: rgb(236, 68, 68);" class="logoutBtn" id="logoutBtn">Cerrar Sesión</button>
 </main>
 
 <script>
@@ -16,6 +33,29 @@
                 window.location.href = '/login';
             } else {
                 console.error('Error al cerrar sesión');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
+
+   document.getElementById('uploadProfileForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        
+        const formData = new FormData(event.target);
+
+        const uid = document.getElementById('userId').value
+
+        try {
+            const response = await fetch(`/api/users/${uid}/documents`, {
+                method: 'POST',
+                body: formData
+            });
+            if (response.ok) {
+                alert('Foto de perfil subida con éxito');
+                window.location.reload();
+            } else {
+                console.error('Error al subir la foto de perfil');
             }
         } catch (error) {
             console.error('Error:', error);

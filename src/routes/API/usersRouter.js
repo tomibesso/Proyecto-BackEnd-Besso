@@ -1,8 +1,9 @@
 import { Router } from "express";
 import userController from "../../controllers/usersController.js";
+import { uploader } from "../../multer.js";
 
 const router = Router();
-const { getUsers, getUserById, addUser, updateUser, deleteUser, changeUserRole } = new userController();
+const { getUsers, getUserById, addUser, updateUser, deleteUser, changeUserRole, uploadDocuments } = new userController();
 
 // Método(petición) para obtener todos los usuarios
 router.get("/", getUsers);
@@ -21,5 +22,8 @@ router.delete("/:uid", deleteUser);
 
 // Método(petición) PUT para cambiar el rol de un usuario
 router.put("/premium/:uid", changeUserRole);
+
+// Método(petición) POST para subir documentos de usuario
+router.post("/:uid/documents", uploader.array('documents'), uploadDocuments);
 
 export default router;

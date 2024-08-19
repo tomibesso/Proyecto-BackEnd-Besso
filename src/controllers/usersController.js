@@ -90,6 +90,7 @@ class userController {
         }
     }
 
+    // Cambiar rol de usuario
     changeUserRole = async (req, res) => {
         const { uid } = req.params;
 
@@ -113,6 +114,51 @@ class userController {
             res.status(500).send({ status: "Error", error: error.message });
         }
     };
+
+    // Subir documento
+    uploadDocuments = async (req, res) => {
+        const { uid } = req.params;
+        const files = req.files;
+        const { type } = req.body
+
+        let folder
+
+        switch (type) {
+            case "product": 
+                folder = 'products';
+                break;
+            case "profile": 
+                folder = 'profiles';
+                break;
+            default:
+                folder = 'documents';
+                break;
+        }
+
+        if (!uid || uid.length !== 24) {
+            return res.status(400).send({ status: "Error", error: "ID de usuario no válido" });
+        }
+
+        try {
+            const user = await this.userService.getUserById(uid);
+            if (!user) {
+                return res.status(404).send({ status: "Error", error: "Usuario no encontrado" });
+            }            
+
+            const documents = files.map(file => ({
+                name: file.originalname,
+                reference: `/uploads/${folder}/${file.filename}`
+            }));
+
+            user.documents.push(...documents);
+            const updatedUser = await this.userService.updateUser(uid, { documents: user.documents });
+
+            res.status(200).send({ status: "Success", payload: updatedUser });
+        } catch (error) {
+            req.logger.error(error);
+            res.status(500).send({ status: "Error", error: error.message });
+        }
+    }
 }
 
 export default userController;

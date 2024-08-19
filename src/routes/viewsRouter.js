@@ -173,15 +173,22 @@ router.get('/profile', passport.authenticate('jwt', { session: false, failureRed
     if (req.user) {        
         try {
             const email = req.user.user.email;
-            const user = await userService.getBy({email})
+            const user = await userService.getBy({email})            
             
             if (!user) {
                 return res.status(404).send({ status: "error", error: "Usuario no encontrado" });
             }
+
+            let profileImageURL = null
+            if (user.documents.length > 0) {
+                const lastDocument = user.documents[user.documents.length - 1];
+                profileImageURL = lastDocument.reference;
+            }
     
             res.render('profile', {
                 user,
-                title: "E-Commerce Tomi - Perfil"
+                title: "E-Commerce Tomi - Perfil",
+                profileImageURL
             });
         } catch (error) {
             req.logger.error("Error al obtener perfil del usuario", error);

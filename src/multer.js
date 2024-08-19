@@ -1,19 +1,32 @@
 import multer from 'multer';
-import {__dirname} from './utils.js';
+import { __dirname } from './utils.js';
+import path from 'path';
 
-// Configura la función de almacenamiento de multer
 const storage = multer.diskStorage({
-    // Define la carpeta de destino para guardar los archivos subidos
-    destination: function(req, file, callback) {
-        callback(null, __dirname+'/public/uploads'); // Define la carpeta de destino para guardar los archivos subidos
+    destination: function (req, file, callback) {
+        let folder
+
+        switch (req.body.type) {
+            case "product": 
+                folder = 'products';
+                break;
+            case "profile": 
+                folder = 'profiles';
+                break;
+            default:
+                folder = 'documents';
+                break;
+        }
+
+        const uploadPath = path.join(__dirname, `/public/uploads/${folder}`);
+        callback(null, uploadPath);
     },
-    // Define el nombre del archivo al ser guardado
-    filename: function(req, file, callback) {
-        callback(null, `${Date.now()}-${file.originalname}`); // Asigna un nombre único al archivo subido, utilizando la fecha actual y el nombre original del archivo
+    filename: function (req, file, callback) {
+        callback(null, `${Date.now()}-${file.originalname}`);
     }
 });
 
-// Configura multer con las opciones de almacenamiento
 export const uploader = multer({
-    storage // Utiliza la función de almacenamiento configurada anteriormente
+    storage
 });
+
