@@ -51,11 +51,14 @@
                 method: 'POST',
                 body: formData
             });
-            if (response.ok) {
-                alert('Foto de perfil subida con éxito');
-                window.location.reload();
+
+            const result = await response.json()
+            
+            if(result.status === "Success") {
+                alert("Foto de perfil subida con éxito")
+                window.location.reload()
             } else {
-                console.error('Error al subir la foto de perfil');
+                alert("Error al subir la foto de perfil")
             }
         } catch (error) {
             console.error('Error:', error);

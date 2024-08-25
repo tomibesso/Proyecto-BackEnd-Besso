@@ -105,10 +105,20 @@ class userController {
             }
 
             const newRole = user.role === 'user' ? 'premium' : 'user';
-            user.role = newRole;
-            const updatedUser = await this.userService.updateUser(uid, { role: newRole });
+            
+            if(newRole === 'user') {
+                const updatedUser = await this.userService.updateUser(uid, { role: newRole })
+                return res.status(200).send({ status: "Success", payload: updatedUser });
+            }
 
-            res.status(200).send({ status: "Success", payload: updatedUser });
+            if (newRole === 'premium') {
+                if (user.documents.length > 0) {
+                    const updatedUser = await this.userService.updateUser(uid, { role: newRole });
+                    return res.status(200).send({ status: "Success", payload: updatedUser });
+                } else {
+                    return res.status(409).send({ status: "Error", error: "Falta documentación para cambiar rol de usuario a premium."});
+                }
+            }
         } catch (error) {
             req.logger.error(error);
             res.status(500).send({ status: "Error", error: error.message });
@@ -153,10 +163,15 @@ class userController {
             user.documents.push(...documents);
             const updatedUser = await this.userService.updateUser(uid, { documents: user.documents });
 
-            res.status(200).send({ status: "Success", payload: updatedUser });
+            if (user.documents.length > 0) {
+                await this.userService.updateUser(uid, { status: "Documents uploaded" });
+                return res.status(200).send({ status: "Success", payload: updatedUser });
+             }
+    
+             return res.status(200).send({ status: "Success", payload: updatedUser });
         } catch (error) {
             req.logger.error(error);
-            res.status(500).send({ status: "Error", error: error.message });
+            return res.status(500).send({ status: "Error", error: error.message });
         }
     }
 }

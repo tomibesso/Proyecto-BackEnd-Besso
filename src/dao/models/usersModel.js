@@ -50,6 +50,10 @@ const userSchema = new Schema({
     },
     last_connection: {
         type: Date
+    },
+    status: {
+        type: String,
+        default: "Documents not uploaded"
     }
 })
 
