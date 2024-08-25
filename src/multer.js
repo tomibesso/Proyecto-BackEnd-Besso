@@ -1,9 +1,11 @@
 import multer from 'multer';
 import { __dirname } from './utils.js';
 import path from 'path';
+import fs from 'fs';
 
 const storage = multer.diskStorage({
     destination: function (req, file, callback) {
+        const { uid } = req.params;
         let folder
 
         switch (req.body.type) {
@@ -18,7 +20,9 @@ const storage = multer.diskStorage({
                 break;
         }
 
-        const uploadPath = path.join(__dirname, `/public/uploads/${folder}`);
+        const uploadPath = path.join(__dirname, `/public/uploads/${uid}/${folder}`);
+
+        fs.mkdirSync(uploadPath, { recursive: true });
         callback(null, uploadPath);
     },
     filename: function (req, file, callback) {
