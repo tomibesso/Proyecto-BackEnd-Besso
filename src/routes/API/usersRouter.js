@@ -3,7 +3,7 @@ import userController from "../../controllers/usersController.js";
 import { uploader } from "../../multer.js";
 
 const router = Router();
-const { getUsers, getUserById, addUser, updateUser, deleteUser, changeUserRole, uploadDocuments } = new userController();
+const { getUsers, getUserById, addUser, updateUser, deleteUser, deleteUsers, changeUserRole, uploadDocuments } = new userController();
 
 // Método(petición) para obtener todos los usuarios
 router.get("/", getUsers);
@@ -19,6 +19,9 @@ router.put("/:uid", updateUser);
 
 // Método(petición) DELETE para eliminar un usuario
 router.delete("/:uid", deleteUser);
+
+// Método(petición) DELETE para eliminar usuarios inactivos (2 días)
+router.delete("/", deleteUsers);
 
 // Método(petición) PUT para cambiar el rol de un usuario
 router.put("/premium/:uid", changeUserRole);

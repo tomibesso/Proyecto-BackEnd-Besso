@@ -2,6 +2,7 @@ import { CustomError } from "../service/errors/customError.js";
 import { generateUserError } from "../service/errors/info.js";
 import { UserService } from "../service/index.js";
 import { EError } from "../service/errors/enums.js";
+import { sendInactivityMail } from "../utils/sendInactivityMail.js";
 
 class userController {
     constructor() {
@@ -89,6 +90,35 @@ class userController {
         } catch (error) {
             req.logger.error(error);
             res.status(500).send({ status: "Error", error: error.message });
+        }
+    }
+
+    // Eliminar usuarios no conectados en lpos ultimos 2 dias
+    deleteUsers = async (req, res) => {
+        try {
+            const actualDate = new Date()
+            const twoDaysAgo = new Date(actualDate)
+            twoDaysAgo.setDate(actualDate.getDate() - 2)
+            
+            const users = await this.userService.getUsers()            
+            
+            for (const user of users.payload) {                
+                if (user.last_connection < twoDaysAgo) {
+                    await this.userService.deleteUser(user._id)
+                    await sendInactivityMail({
+                        to: user.email,
+                        subject: "Eliminado por inactividad.",
+                        html: `<p>La cuenta del Ecommerce BackEnd de Tomi Besso con mail: ${user.email} ha sido eliminada debido a una actividad en su cuenta mayor a 2 dias.</p>`
+                    })
+                    console.log("Mail enviado a: " + user.email);
+                } else {
+                    console.log("No hay usuarios con fecha mayor a 2 dias"); 
+                }
+            }
+
+        } catch (error) {
+            req.logger.error(error);
+            res.status(500).send({ status: "Error", error: error.message }); 
         }
     }
 
