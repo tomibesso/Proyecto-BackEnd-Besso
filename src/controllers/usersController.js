@@ -12,8 +12,10 @@ class userController {
     getUsers = async (req, res) => {
         const { limit, numPage, sortProperty, sort } = req.query;
         try {
-            const users = await this.userService.getUsers(limit, numPage, sortProperty, sort); // Usa el método del manager para obtener los usuarios
-            res.send(users);
+            const users = await this.userService.getUsers(limit, numPage, sortProperty, sort);
+            const userPayload = users.payload.map(({ _id, firstName, email, role }) => ({ _id, firstName, email, role }));
+
+            res.status(200).send({status: 'Success', payload: userPayload})
         } catch (error) {
             req.logger.error(error);
             res.status(500).send({ status: "Error", error: error.message });
