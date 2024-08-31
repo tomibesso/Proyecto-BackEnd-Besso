@@ -39,6 +39,20 @@ class userController {
         }
     }
 
+    // Obtener usuario por su id
+    getUserByMail = async (req, res) => {
+        const userMail = req.query.email 
+    
+        try {
+            const user = await this.userService.getUser({ email: userMail }); // Usa el método del manager para obtener el usuario por ID
+            if (!user) return res.status(404).send({ status: "Error", error: "Usuario no encontrado" });
+            res.status(200).send({ status: "Success", payload: user });
+        } catch (error) {
+            req.logger.error(error);
+            res.status(500).send({ status: "Error", error: error.message });
+        }
+    }
+
     // Agregar nuevo usuario
     addUser = async (req, res, next) => {
         const { firstName, lastName, email, password, age } = req.body;
@@ -100,7 +114,9 @@ class userController {
             const twoDaysAgo = new Date(actualDate)
             twoDaysAgo.setDate(actualDate.getDate() - 2)
             
-            const users = await this.userService.getUsers()            
+            const users = await this.userService.getUsers()
+            
+            let deletedUsers = 0
             
             for (const user of users.payload) {                
                 if (user.last_connection < twoDaysAgo) {
@@ -111,9 +127,15 @@ class userController {
                         html: `<p>La cuenta del Ecommerce BackEnd de Tomi Besso con mail: ${user.email} ha sido eliminada debido a una actividad en su cuenta mayor a 2 dias.</p>`
                     })
                     console.log("Mail enviado a: " + user.email);
-                } else {
-                    console.log("No hay usuarios con fecha mayor a 2 dias"); 
+                    deletedUsers++;
                 }
+            }
+
+            if (deletedUsers > 0) {
+                res.status(200).send({ status: "Success", payload: "Usuarios inactivos eliminados correctamente" });
+            } else {
+                console.log("No hay usuarios con fecha mayor a 2 días");
+                res.status(404).send({ status: "Empty", payload: "No hay usuarios con fecha mayor a 2 días" });
             }
 
         } catch (error) {

@@ -211,8 +211,6 @@ async function updateProduct(event) {
             body: JSON.stringify(updatedProduct)
         });
 
-        console.log('Respuesta del servidor al crear producto:', response)
-
         if (response.ok) {
             alert("Producto actualizado")
         } else {

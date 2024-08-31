@@ -214,5 +214,8 @@ router.get('/users', passportCall('jwt'), authorization('admin'), async (req, re
 router.get('/manageProducts', passportCall('jwt'), authorization('admin', 'premium'), async (req, res) => {
     res.render('manageProducts')
 })
+router.get('/manageUsers', passportCall('jwt'), authorization('admin'), async (req, res) => {
+    res.render('manageUsers')
+})
 
 export default router;
