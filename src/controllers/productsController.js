@@ -1,13 +1,16 @@
 import { ProductService } from "../service/index.js";
+import { UserService } from "../service/index.js";
 import { productsModel } from "../dao/models/productsModel.js";
 import { CustomError } from "../service/errors/customError.js";
 import { generateGetProductError, generateProductError } from "../service/errors/info.js";
 import { EError } from "../service/errors/enums.js";
+import { deletedProductMail } from "../utils/deletedProductMail.js";
 
 class productController {
     constructor (){
         this.productService = ProductService;
         this.productsModel = productsModel;
+        this.userService = UserService;
     }
 
     getProducts = async (req, res) => {
@@ -105,8 +108,6 @@ class productController {
             res.status(500).json({ status: "Error", error: "Error interno del servidor" });
         }
     }
-    
-    
 
     deleteProduct = async (req, res) => {
         try {
@@ -119,13 +120,30 @@ class productController {
                 req.logger.error(`Producto con ID: ${pid} no encontrado`);
                 return res.status(404).json({ status: "Error", error: `Producto con ID: ${pid} no encontrado` });
             }
-    
-            if (userRole !== 'admin' && product.owner.toString() !== userId) {
-                return res.status(403).json({ status: "Error", error: "No tienes permisos para eliminar este producto" });
+            
+            
+            if (userRole === 'admin') {                
+                await this.productService.deleteProduct(pid);
+                if(product.owner) {
+                    const owner = await this.userService.getUserById(product.owner)
+                    const ownerEmail = owner.email
+                    
+                    await deletedProductMail({
+                        to: ownerEmail,
+                        subject: "Producto eliminado.",
+                        html: `<p>Su producto "${product.title}" ha sido eliminado</p>`
+                    })
+                }
+                return res.status(200).json({ status: "Success", message: `Producto con ID: ${pid} eliminado correctamente y mail enviado al dueño` });
             }
     
-            await this.productService.deleteProduct(pid);
-            res.status(200).json({ status: "Success", message: `Producto con ID: ${pid} eliminado correctamente` });
+            if (userRole === 'premium' && product.owner.toString() === userId) {
+                await this.productService.deleteProduct(pid);
+                return res.status(200).json({ status: "Success", message: `Producto con ID: ${pid} eliminado correctamente` });
+            }
+            
+            return res.status(403).json({ status: "Error", error: "No tienes permisos para eliminar este producto" });
+    
         } catch (error) {
             req.logger.error(`Error eliminando el producto con ID: ${pid}`, error);
             res.status(500).json({ status: "Error", error: "Error interno del servidor" });
