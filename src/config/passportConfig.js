@@ -14,7 +14,7 @@ const LocalStrategy = local.Strategy
 const JWTStrategy = jwt.Strategy
 const ExtractJWT = jwt.ExtractJwt
 
-const { privateKey } = objectConfig
+const { privateKey, port } = objectConfig
 
 // instanciamos el userDAOMongo
 const userService = new userManager()
@@ -78,7 +78,7 @@ export const initializePassport = () => {
     passport.use('github', new GithubStrategy({
         clientID:'Iv23li7fDaNQWGweOXvy',
         clientSecret:'38837c7acdeee010fdf145e32648481f991b23ae',
-        callbackURL: 'http://localhost:8080/api/sessions/githubcallback'
+        callbackURL: `http://localhost:${port}/api/sessions/githubcallback`
     },async (accessToken, refreshToken, profile, done) => {
         try {
             logger.info(profile);

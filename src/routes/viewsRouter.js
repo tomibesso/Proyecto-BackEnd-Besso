@@ -7,7 +7,9 @@ import passport from 'passport';
 import { passportCall }  from "../utils/passportCall.js";
 import { authorization } from "../utils/authorizationJWT.js";
 import { devLogger, prodLogger } from "../utils/loggers.js";
+import { objectConfig } from "../config/index.js";
 
+const { port } = objectConfig
 const logger = process.env.LOGGER === 'production' ? prodLogger : devLogger
 
 const router = Router();
@@ -91,7 +93,8 @@ router.get('/products', optionalAuth, async (req, res) => {
             title: "E-Commerce Tomi - Productos",
             styles: "./public/css/productsStyles.css",
             user: user,
-            cartId: cartId
+            cartId: cartId,
+            port: port
         });
     } catch (error) {
         req.logger.error(error);
@@ -122,7 +125,8 @@ router.get('/products/:pid', optionalAuth, async (req, res) => {
             stock: result.stock,
             category: result.category,
             title: "E-Commerce Tomi - Detalle",
-            cartId: cartId
+            cartId: cartId,
+            port: port
         }
         )
     } catch (error) {

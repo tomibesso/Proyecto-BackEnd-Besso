@@ -1,13 +1,15 @@
 import { createHash, isValidPassword } from '../utils/bcrypt.js';
 import { generateToken, verifyToken } from '../utils/jsonwebtokens.js';
 import { sendEmail } from '../utils/sendMail.js'
+import { objectConfig } from '../config/index.js';
 
 import { UserService } from "../service/index.js"
 import { CartService } from "../service/index.js";
 import UserDto from '../dtos/usersDTO.js';
 import currentUserDto from '../dtos/currentUserDTO.js';
 
-import { objectConfig } from '../config/index.js';
+const { port } = objectConfig
+
 
 class sessionController {
     constructor() {
@@ -112,7 +114,7 @@ class sessionController {
                 maxAge: 1000 * 60 * 60,
                 httpOnly: true
             });
-            const resetUrl = `http://localhost:8080/resetPassword`
+            const resetUrl = `http://localhost:${port}/resetPassword`
 
             await sendEmail({
                 to: userMail,

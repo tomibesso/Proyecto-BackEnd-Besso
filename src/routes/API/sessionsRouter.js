@@ -1,7 +1,9 @@
 import {Router} from 'express';
 import passport from 'passport';
 import sessionController from '../../controllers/sessionsController.js';
+import { objectConfig } from '../../config/index.js';
 
+const { port } = objectConfig
 const router = Router()
 const { login, register, logout, restorePassword, resetPassword, githubCallback, current } = new sessionController()
 
@@ -17,7 +19,7 @@ router.post('/resetPassword', resetPassword)
 
 router.get('/github', passport.authenticate('github', {scope: 'user: email'}), async (req, res) => {})
 
-router.get('/githubcallback', passport.authenticate('github', {failureRedirect: 'localhost:8080/login'}), githubCallback)
+router.get('/githubcallback', passport.authenticate('github', {failureRedirect: `localhost:${port}/login`}), githubCallback)
 
 router.get('/current', passport.authenticate('current', { session: false }), current);
 
