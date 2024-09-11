@@ -25,7 +25,7 @@ dotenv.config({
 });
 
 export const objectConfig = {
-    port: process.env.PORT || 8080,
+    port: process.env.PORT,
     privateKey: process.env.PRIVATE_KEY,
     mongoURL: process.env.MONGO_URL,
     cookieParserSign: process.env.COOKIE_PARSER_SIGN,
