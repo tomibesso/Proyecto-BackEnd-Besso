@@ -114,7 +114,7 @@ class sessionController {
                 maxAge: 1000 * 60 * 60,
                 httpOnly: true
             });
-            const resetUrl = `http://localhost:${port}/resetPassword`
+            const resetUrl = `/resetPassword`
 
             await sendEmail({
                 to: userMail,
